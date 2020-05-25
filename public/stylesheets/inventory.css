@@ -1,0 +1,99 @@
+body{
+	margin: 0;
+	align-self: center;
+	background-color: black;
+	font-size: 10px;
+	font-family: sans-serif;
+}
+.img2{
+	margin-left: 0;
+	margin-right: 0;
+	height:30vh;
+	width:100%;
+	background-color: navy;
+}
+form{
+	font-size: 40px; 
+	width:100vw;
+	font-family: sans-serif;
+	background-color: #eeeeee;
+	color: #7b7b7b;
+}
+.d2{
+	margin: 0;
+	height: auto;
+	width:100%;
+	align-items: center;
+}
+.h12{
+	align-content: center;
+}
+
+.btn1{
+	background-color:#3295a8;
+	color: white;
+	font-size: 1.75em;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	cursor: pointer;
+	width: 80%;
+	border-radius: 20px;
+	align-self: center;
+	align-content: center; 
+}
+
+.btn1:hover{
+	opacity: 0.8;
+}
+
+.btn2{
+	background-color: #3295a8;
+	color: white;
+	font-size: 1.75em;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	cursor: pointer;
+	width: 60%;
+	border-radius: 20px;
+	align-self: center;
+	align-content: center; 
+}
+
+.btn2:hover{
+	opacity: 0.8;
+}
+
+.sel1,.qty3{
+	width:100%;
+	height:7vh ;
+	font-size:1.75em;
+}
+
+.toe,.qty2{
+	font-size: 1.75em;
+}
+
+.menu a{
+	text-align: center;
+	height: 12vh;
+	font-size: 1.75em;
+	margin:0;
+	text-decoration: none;
+	color: white;
+	padding: 20px 20px;
+}
+.menu a:hover{
+	text-decoration:underline;
+}
+.menu .menualign{
+	text-align: center;
+	padding:20px;
+	background-color: #3295a8;
+}
+
+.link{
+	color: #3295a8;
+	font-size: 80px;
+}

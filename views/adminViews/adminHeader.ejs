@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!--<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap.min.css" />-->
+<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap-responsive.min.css" />
+
+<link rel="stylesheet" href="/css/Dashboard_CSS/select2.css" />
+<!--<link rel="stylesheet" href="/css/Dashboard_CSS/matrix-style.css" />-->
+
+<link rel="stylesheet" href="/css/Dashboard_CSS/AdminDashboard_css.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+<style>
+.vertical-nav {
+  min-width: 17rem;
+  width: 17rem;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s;
+}
+
+.page-content {
+  width: calc(100% - 17rem);
+  margin-left: 17rem;
+  transition: all 0.4s;
+}
+.page-content-body {
+  width: calc(100% - 17rem);
+  margin-left: 18rem;
+  transition: all 0.4s;
+}
+#sidebarCollapse{
+    width:105px !important;
+    height: 38px !important;
+    
+    z-index: 50;
+}
+
+
+/* for toggle behavior */
+
+#sidebar.active {
+  margin-left: -17rem;
+}
+
+#content.active {
+  width: 100%;
+  margin-left: 0;
+}
+img{
+    width: 200px;
+    height: 200px;
+}
+
+@media (max-width: 768px) {
+    #sidebarCollapse{
+    width:105px !important;
+    height: 38px !important;
+   
+    
+}
+  #sidebar {
+    margin-left: -10rem;
+  }
+  #sidebar.active {
+    margin-left: 0;
+  }
+  #content {
+    width: 100%;
+    margin: 0;
+  }
+  #content-body {
+    width: 100%;
+    margin: 0;
+  }
+  #content.active {
+    margin-left: 8rem;
+    width: calc(100% - 8rem);
+  }
+  #content-body.active {
+    margin-left: 10rem;
+    width: calc(100% - 10rem);
+  }
+  .vertical-nav {
+  min-width: 10rem;
+  width: 10rem;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s;
+  z-index: 50;
+}
+img{
+    width: 100px;
+    height: 100px;
+}
+.visible{
+    display:block !important
+}
+.navbar > h3{
+    font-size: 12px;
+    float: right;
+}
+
+}
+</style>
+
+</head>
+<body>
+
+        <div class="vertical-nav bg-dark" id="sidebar">
+                <div class="py-4 px-3 mb-4 bg-dark">
+                  <div class="media d-flex align-items-center"><img src="/pic/da_logo.png" />
+                  </div>
+                </div>
+                <p class="text-white font-weight-bold text-uppercase px-3 small pb-4 mb-0">Personal Details</p>
+            <ul class="nav flex-column bg-light mb-0 visible">
+                    <li class="nav-item">
+                      <a href="/users/loadHomePage" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                                Home
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="#" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-address-card mr-3 text-primary fa-fw"></i>
+                                Profile
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/users/changePassword" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-user-secret mr-3 text-primary fa-fw"></i>
+                                Change Password
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/users/logout" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-hourglass-end mr-3 text-primary fa-fw" aria-hidden="true"></i>
+                                Logout
+                            </a>
+                    </li>
+                  </ul>
+
+
+
+                  <!-- EMPLOYEE DETAILS-->
+                  <br/>
+                  <p class="text-white font-weight-bold text-uppercase px-3 small pb-4 mb-0">Other Details</p>
+                <ul class="nav flex-column bg-light mb-0 visible">
+                    <li class="nav-item">
+                      <a href="/admin/loadAllEmpUsers" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-id-card mr-3 text-primary fa-fw"></i>
+                                Employees
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/admin/loadAllStudents" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-user mr-3 text-primary fa-fw"></i>
+                                Students
+                            </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/admin/loadGenerateReport" class="nav-link text-white font-italic bg-dark">
+                                <i class="fa fa-bar-chart mr-3 text-primary fa-fw"></i>
+                                Generate Report                             </a>
+                    </li>
+                   
+                  </ul>
+                
+        </div>
+        
+
+        <!--<div id="sidebar" > 
+                <ul >
+                        <li><img src="/pic/course-bg-3.jpg" alt="daiict" style="max-width: 100%;"></li>
+                        <li><a href="Home.html">Home</a></li>
+                        <li><a href="/admin/loadAllEmpUsers">Employee</a></li>
+                        <li><a href="Student.html">Student</a></li>
+                        <li><a href="Report.html">Report Generate</a></li>
+                        
+                </ul>
+        </div>-->
+<div id="content" class="page-content">
+    <nav class="navbar bg-dark" style="height: 70px;">
+        <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-3 mb-2">
+            <i class="fa fa-bars mr-2">
+        </i><small class="text-uppercase font-weight-bold">Toggle</small></button>
+       <h3 class="text-white font-weight-bold"> Welcome <%=title%> </h3></div>
+    </nav>
+  
+</div>
+<script>
+$(function() {
+    // Sidebar toggle behavior
+    $('#sidebarCollapse').on('click', function() {
+      $('#sidebar, #content').toggleClass('active');
+    });
+  });
+</script>
+</body>
+</html>

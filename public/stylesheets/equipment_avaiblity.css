@@ -1,0 +1,56 @@
+
+.label1{
+	align-content: center;
+	font-size: 30px;
+	height: 50px;
+}
+.label_adjustment
+{
+	text-align: center;
+	margin-top: 25px;
+    margin-bottom: 23px;
+}
+.container2{
+	margin-left:14px;
+	margin-right:10px;
+	margin-top: 45px;
+	margin-bottom: 5px;
+	text-align: center;
+	align-content: center;
+}
+.btn1{
+	background-color:  #2c6ed5;
+	color: white;
+	font-size: 25px;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	cursor: pointer;
+	width:50%;
+	border-radius: 20px;
+}
+
+select,input{
+	width:100%;
+	height :27px;
+}
+table{
+	text-align: center;
+	padding-right: 4px;
+	padding-left: 4px;
+	border-collapse:separate;
+	border-spacing:0 15px;
+}
+th, td { 
+	width:150px; 
+	text-align:center;
+	padding:5px 
+  
+} 
+.c{
+	text-align: center;
+	align-items: center;
+	margin-left: 390px;
+	align-content: center;
+
+}

@@ -1,0 +1,200 @@
+<html>
+
+        <head>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+            <link rel="stylesheet" type="text/css" href="/stylesheets/homepageSAC.css"></link>
+            <script type="text/javascript" src="/javascripts/inventory.js"></script>
+            <style>
+            
+            </style>
+        </head>
+        <body>
+            
+            <%- include('sac_header') %> 
+          <br>
+
+          <div class="chooseBtn">
+            <h2 class="title" style="color: #0060b4;">Inventory Management</h2>
+          </div>
+          <div class="container">
+          <div class="row">
+              <div class="col-md-6">
+
+                <div class="table-responsive">
+                    <table class="table" style="font-size: medium;">
+                        <thead style="background-color: #20232e;color: white;">
+                            <th>Equipment Name</th>
+                            <th>Quantity</th>
+                            <th>No of Available</th>
+                            <th>No of Defects</th>
+                        </thead>
+                        <tbody>
+                            <% data.stock.forEach(result=>{ %>
+                            <tr>
+                                <td><%= result.name %></td>
+                                <td><%= result.NumberOfItems %></td>
+                                <td><%= result.NumberOfAvailable %></td>
+                                <% if( result.NumberOfDefects>0) { %>
+                                <td><%= result.NumberOfDefects %></td>
+                                <% } else { %>
+                                  <td> - </td>      
+                                <% } %>
+                               
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+        
+
+              </div>
+              <div class="col-md-6">
+
+
+                <div class="chooseBtn">
+                    <button class="updatebtn" onclick="AddNewRecord()">Add New Record</button>
+                    <button class="updatebtn" onclick="UpdateNewStock()">Update New Stock</button>
+                </div>
+            <div class="d1" id="addnewrecord">    
+                <form align="center" method="POST" action="/equipment/inventory/">
+                    <br/>
+                    <h2 class="h11" style="color: #0060b4;">Add New Sports Equipment</h2>
+                    <table align="center">
+                    <tr>
+                        <td><label class="sel1" style="color: #0060b4;">Type of equipment: </label></td>
+                        <td>
+                            <input type="text" class="sel" name="itemName" id="itemName">
+                        </td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <td><label class="qty" style="color: #0060b4;">Quantity: </label></td>
+                        <td><input type="number" class="qty1" id="qty1" onkeyup="validateForm()" required name="totalQuantity"></td>
+                    </tr>
+                        <tr> <td></td> <td><span id="error-qty" style="color: red" ></span></td></tr>
+                    <tr></tr>
+                   
+                        <tr></tr>
+                    <tr align="center">
+                    <td><button type="submit" class="btn3">Submit</button></td>
+                    <td><button type="reset" class="btn4" click="clearfun()">Clear</button></td>
+                </tr>
+                </table>
+                <br/>
+                <br/>
+                </form>
+                </div>
+                <div class="d1" id="UpdateNewStock">
+                        <form align="center" method="POST" action="/equipment/inventory/updatestock">
+                            <br/>
+                            <h2 class="h11" style="color: #0060b4;">Update Sports Equipment Stock</h2>
+                            
+                            <table align="center">
+                               <tr>
+                                   <td colspan="2" align="center">
+                                        <input type="radio" name="ch_radio" id="rqty1" value="Qty" checked>Quantity 
+                                        &nbsp;&nbsp; &nbsp;&nbsp;                                       
+                                        <input type="radio" name="ch_radio" id="rdft1" value="Dft">Defects 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="ch_radio" id="rrpr1" value="Rpr">Repairs
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+                               </tr> 
+                            <tr>
+                                <td><label class="sel1" style="color: #0060b4;">Type of equipment: </label></td>
+                                <td>
+                                        <select required id="sel1" class="sel" name="equipmentID" onchange="v1()">
+                                                <option value="">Select equipment</option>
+                                                <% data.stock.forEach(result=>{ %>
+                                                    <option  data-dft="<%= result.NumberOfDefects %>" value="<%= result._id %>"><%= result.name %></option>
+                                                <% }) %>
+                                                </select>
+                                </td>
+                            </tr>
+                            
+                            <tr></tr>
+                            <tr>
+                                <tbody id="qty2">
+                                    <td><label class="qty" style="color: #0060b4;">Quantity: </label>
+                                        <br>
+                                        <span style="color: red; font-size: 15px;" >(quantity will be added in current quantity)</span>
+                                    </td>
+                                    <td><input type="number" class="qty1" id="qty1" name="quantity"></td>
+                                </tbody>   
+                                </tr>
+                            <tr></tr>
+
+                            <tr>
+                                <tbody  id="dft2" >
+                                <td><label class="qty" style="color: #0060b4;">Defects: </label>
+                                    <br>
+                                    <span style="color: red; font-size: 15px;" >(Defects will be added in current quantity)</span>
+                                </td>
+                                <td><input type="number" class="qty1" id="defects1" name="Defects"></td>
+                                </tbody>
+                            </tr>
+                        <tr></tr>
+                        <tr>
+                            <tbody  id="rpr2" >
+                                <td><label class="qty" style="color: #0060b4;">Repair: </label>
+                                    <br>
+                                    <span style="color: red; font-size: 15px;" >(Repair will be added in current quantity)</span>
+                                </td>
+                                <td><input type="number" class="rpr1" id="repair1" name="Repair"></td>
+                            </tbody>
+                            <tbody id="rpr3">
+                                
+                                <td colspan="2"><span style="color:red;font-size: 15px;"> No Defects </span></td>
+                            </tbody>
+                            
+                                <!-- <td><span style="color: red; font-size: 15px;" > No defects  </span></td> -->
+                            
+                            
+                            
+                            
+                        </tr>
+                            <tr align="center">
+                            <td><button type="submit" class="btn3" id="submitBtn" onclick="submitFn()">Submit</button></td>
+                            <td><button type="reset" class="btn4" click="clearfun()">Clear</button></td>
+                        </tr>
+                        </table>
+                        <br/>
+                        <br/>
+                        </form>
+                    </div>
+
+
+              </div>
+          </div>
+        </div>
+          
+            <%- include('../footer') %> 
+
+
+            <script>
+                let Defected_Items=1;
+                document.getElementById('rpr3').hidden=true;
+                function v1()
+                {
+                    let x=document.getElementById('sel1');
+                    
+                    var y=x.options[x.selectedIndex].getAttribute('data-dft');
+      
+                      Defected_Items=Number(y);
+                      if(Defected_Items==0)
+                      {
+                          document.getElementById('rpr2').hidden=true;
+                          document.getElementById('rpr3').hidden=false;
+                      }
+                      else
+                      {
+                        document.getElementById('rpr2').hidden=false;
+                          document.getElementById('rpr3').hidden=true;
+                      }
+                }
+            </script>
+    
+
+        </body>
+        </html>
+       

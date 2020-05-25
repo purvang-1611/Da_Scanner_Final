@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Scan QR From gate
+	</title>
+	<style type="text/css">
+		table, th, td
+		{
+			border: 1px solid black;
+		}
+		b
+		{
+			color: red
+		}
+	</style>
+</head>
+<body>
+	<h1> <%= title %> </h1>
+	<button id="pdf">Generate PDF</button>
+	<br><br>
+	FROM  <b id="startDate"> <%= startDate %> </b> 
+	TO  <b id="endDate"> <%= endDate %> </b> <br><br>
+
+	<% if (messages === "No Data Found") { %>
+		<h3>NO DATA FOUND</h3>
+	<% } else { %>
+		<table style="width:100%" id="table">
+		  <tr border="1">
+		    <th>StudentId</th>
+		    <th>CourseName</th>
+		    <th>InDate</th>
+		    <th>InTime</th>
+		    <th>OutDate</th>
+		    <th>OutTime</th>
+		    <th>Forgot</th>
+		    <th>VisitorsWithStudent</th>
+		  </tr>
+			<% if (messages) { %>
+				<% if(messages.length > 0) { %>
+						<% for(mes of messages) { %>
+							<tr>
+								<td> <%= mes.userID %> </td>
+								<td> <%= mes.gaterecords.courseName %> </td>
+								<td> <%= mes.inDate %> </td>
+								<td> <%= mes.inTime %> </td>
+								<td> <%= mes.outDate %> </td>
+								<td> <%= mes.outTime %> </td>
+								<td> <%= mes.forgot %> </td>
+								<td> <%= mes.noOfVisitors %> </td>
+							</tr>
+						<% } %>
+				<% } %>
+			<% } %>
+		</table>
+	<% } %>	
+	<!-- <img src="/static/Images/DA_logo.png" > -->
+<% var rootPath = '../'; %>
+
+
+<script src="https://rawgit.com/MrRio/jsPDF/master/dist/jspdf.debug.js"></script>
+<script src="https://rawgit.com/someatoms/jsPDF-AutoTable/master/dist/jspdf.plugin.autotable.js"></script>
+
+<script>
+	document.getElementById('pdf').onclick = function()
+	{
+		var startDate = document.getElementById("startDate").innerHTML;
+		var endDate = document.getElementById("endDate").innerHTML;
+		var img = new Image(50, 50);
+		img.src = "/static/studentStatic/images/DA_logo.png";
+		var doc = new jsPDF('p', 'pt');
+		var res = doc.autoTableHtmlToJson(document.getElementById('table'));
+		var height = doc.internal.pageSize.height;
+		doc.text("DAIICT GATE ENTRY/EXIT RECORDS FROM "+ startDate + " TO " + endDate, 20, 50);
+		// doc.autoTable(res.columns, res.data, {
+		//   startY: 200
+		// });
+		// doc.autoTable(res.columns, res.data, {
+		//   startY: doc.autoTableEndPosY() + 50
+		// });
+		doc.addImage(img, 'PNG', 180, 200);
+		doc.autoTable(res.columns, res.data,
+		{
+			startY: height,
+			afterPageContent: function(data)
+			{
+				doc.setFontSize(20)
+				doc.text("DAIICT - GATE RECORDS", 50, height - data.settings.margin.bottom + 10);
+			}
+		});
+		doc.save("DA Gate Entry/Exir Records FROM "+ startDate + " TO " + endDate);
+	};
+</script>
+
+</body>
+</html>

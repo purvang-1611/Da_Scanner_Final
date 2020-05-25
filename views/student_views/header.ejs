@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Document</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+    <nav class="n1">
+        <div>
+            <br>
+    <header>
+      <div class="container">
+      <img src="https://www.daiict.ac.in/wp-content/uploads/2019/01/logo-2018.png" class="img1 img-responsive"/>
+    </div>
+    </header>
+
+    </div>
+    </nav>  
+
+<div class="topnav" id="myTopnav">
+    
+    <a class="menualign" href="/student_homepage1" class="active">Home</a>
+    <a onclick="onRegenarateQr()">RegenerateQr</a>
+    <a href="/equipment/borrow_history">Equipment borrow history</a>
+    <a href="/index">Log out</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+
+</div>
+
+
+<script>
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+
+    function onRegenarateQr()
+    {
+      
+      $.ajax({
+                  type: 'get',
+                  url: '/student_header',
+              
+                  success: function(data){
+                    
+                    if(data>0)
+                    {
+
+                      if(confirm("Are you sure you want to regenerateQR ? \n"+data+" remaining"))
+                      {
+                        console.log("yes");
+                        window.location.href="/qrcode";
+                      }
+                      else{
+                        console.log("no");
+
+                      }
+
+                    }
+                    else
+                    {
+                      alert("Please contact Admin office");
+                    }
+
+                  }
+                })
+
+    }
+    </script>
+    
+
+
+</body>
+</html>

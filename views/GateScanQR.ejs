@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="ZXing for JS">
+
+  <title>DAScanner - ScanQR</title>
+
+  <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+  <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/normalize.css@8.0.0/normalize.css">
+  <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/milligram@1.3.0/dist/milligram.min.css">
+
+  <style type="text/css">
+    #buttonDiv
+    {
+      z-index: 99;
+    }
+    pre
+    {
+      width: 70%;
+      height: 30px;
+    }
+    #studentId
+    {
+      height: 30px;
+    }
+    #result
+    {
+      width: 80%;
+      height: 200px;
+      border: 0.5px dashed;
+    }
+    #btnout
+    {
+      border-color: black;
+      background-color: #15c26b;
+    }
+    #btnin
+    {
+      border-color: black;
+      background-color: #FFAE0C;
+    }
+    #verify
+    {
+      border-color: black;
+      background-color: #02b3e4;
+    }
+    #result
+    {
+      padding:10px;
+    }
+  </style>
+  <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script> 
+  
+    <script> 
+        $("#button").on('touchstart click', function(event) { 
+            if (event.type == "touchstart") { 
+                $(this).off('click'); 
+                console.log("Only touch event is fired"); 
+            } else if (event.type == "click") { 
+                $(this).off('touchstart'); 
+                console.log("Only click event is fired"); 
+            } 
+        }); 
+    </script> 
+</head>
+
+<body>
+
+  <main class="wrapper" style="padding-top:2em">
+
+    <section class="container" id="demo-content">
+      <h1 class="title">Scan QR Code from Video Camera</h1>
+
+      <p>
+        <a class="button-small button-outline" href="/">HOME 🏡</a>
+      </p>
+
+      <div id="buttonDiv">
+        <a><button class="button" id="startButton"> Start </button> </a>
+        <a> <button class="button"  id="resetButton"> Reset </button></a>
+      </div>
+
+      <div>
+        <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+      </div>
+
+      <label>OR Enter Manually:</label>
+      <pre><input type="text" name="studentId" id="studentId"></pre>
+
+      <label>Student Details:</label>
+      <div id="result">
+      </div>
+      <br>
+      <button id="verify">Verify</button>
+      <button id="btnIn" disabled>Entry</button>
+      <button id="btnOut" disabled>Exit</button>
+
+      <div id="sourceSelectPanel" style="display:none">
+        <label for="sourceSelect">Change video source:</label>
+        <select id="sourceSelect" style="max-width:400px">
+        </select>
+      </div>
+
+      <div style="display: table">
+        <label for="decoding-style"> Decoding Style:</label>
+        <select id="decoding-style" size="1">
+          <option value="once">Decode once</option>
+          <option value="continuously">Decode continuously</option>
+        </select>
+      </div>
+
+    </section>
+
+    <footer class="footer">
+      <section class="container">
+        <a target="_blank" href="/">Home</a>
+      </section>
+    </footer>
+  </main>
+
+  <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
+  <script type="text/javascript">
+    function CheckQR(id)
+    {
+      console.log("in CheckQR");
+      
+      $.post('/gate/checkQR',
+      {
+        studentId: id,
+        mes: "call from ajax"
+      },
+      (data, status)=>
+      {
+        console.log(data);
+        if(data === "ERROR")
+        {
+          $('#result').html("<span style='color: red;'> <b>"+data+"<b></span>");
+        }
+        if(data === "INVALID")
+        {
+          $('#result').html("<span style='color: red;'> <b>"+data+" StudentID OR NO DATA FOUND<b></span>");
+        }
+        else
+        {
+          $('#result').html(
+            "Id:&emsp;" + data._id + "<br>" +
+            "FullName:&emsp;" + data.fName + " " + data.lName + "<br>" + 
+            "Course:&emsp;" + data.courseName + "<br>" +
+            "batch:&emsp;" + data.batchYear
+          );
+          $('#btnIn').prop('disabled', false);
+          $('#btnOut').prop('disabled', false);
+        }
+      });
+    }
+    $("#verify").click(()=>
+    {
+      var id = document.getElementById("studentId").value;
+      console.log(id);
+      CheckQR(id);
+    });
+    $("#btnIn").click(()=>
+    {
+      var id = document.getElementById("studentId").value;
+      console.log(id);
+      
+      $.post('/gate/insertRecord',
+      {
+        studentId: id,
+        in: true
+      },
+      (data, status)=>
+      {
+        if(data === "ERROR")
+        {
+          $('#result').html("<span style='color: red;'> <b>"+data+"<b></span>");
+        }
+        if(data === "success")
+        {
+          $('#result').html("<span style='color: red;'> <b>\
+            RECORD INSERTED<b></span>");
+          document.getElementById("studentId").value = "";
+          $('#btnIn').prop('disabled', true);
+          $('#btnOut').prop('disabled', true);
+        }
+      });
+    });
+    $("#btnOut").click(()=>
+    {
+      var id = document.getElementById("studentId").value;
+      console.log(id);
+      
+      $.post('/gate/insertRecord',
+      {
+        studentId: id,
+        out: true
+      },
+      (data, status)=>
+      {
+        if(data === "ERROR")
+        {
+          $('#result').html("<span style='color: red;'> <b>"+data+"<b></span>");
+        }
+        if(data === "success")
+        {
+          $('#result').html("<span style='color: red;'> <b>\
+            RECORD INSERTED<b></span>");
+          document.getElementById("studentId").value = "";
+          $('#btnIn').prop('disabled', true);
+          $('#btnOut').prop('disabled', true);
+        }
+      });
+    });
+    function decodeOnce(codeReader, selectedDeviceId)
+    {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) =>
+      {
+        console.log(result)
+        document.getElementById('studentId').textContent = result.text;
+        CheckQR(result.text);
+      })
+      .catch((err) =>
+      {
+        console.error(err)
+        document.getElementById('result').textContent = err
+      })
+    }
+    function decodeContinuously(codeReader, selectedDeviceId)
+    {
+      codeReader.decodeFromInputVideoDeviceContinuously(selectedDeviceId, 'video', (result, err) => {
+        if (result) {
+          // properly decoded qr code
+          console.log('Found QR code!', result)
+          document.getElementById('studentId').textContent = result.text
+        }
+        if (err) {
+          // As long as this error belongs into one of the following categories
+          // the code reader is going to continue as excepted. Any other error
+          // will stop the decoding loop.
+          //
+          // Excepted Exceptions:
+          //
+          //  - NotFoundException
+          //  - ChecksumException
+          //  - FormatException
+          if (err instanceof ZXing.NotFoundException) {
+            console.log('No QR code found.')
+          }
+          if (err instanceof ZXing.ChecksumException) {
+            console.log('A code was found, but it\'s read value was not valid.')
+          }
+          if (err instanceof ZXing.FormatException) {
+            console.log('A code was found, but it was in a invalid format.')
+          }
+        }
+      })
+    }
+    window.addEventListener('load', function ()
+    {
+      let selectedDeviceId;
+      const codeReader = new ZXing.BrowserQRCodeReader()
+      console.log('ZXing code reader initialized')
+      codeReader.getVideoInputDevices()
+        .then((videoInputDevices) => {
+          const sourceSelect = document.getElementById('sourceSelect')
+          selectedDeviceId = videoInputDevices[0].deviceId
+          if (videoInputDevices.length >= 1) {
+            videoInputDevices.forEach((element) => {
+              const sourceOption = document.createElement('option')
+              sourceOption.text = element.label
+              sourceOption.value = element.deviceId
+              sourceSelect.appendChild(sourceOption)
+            })
+            sourceSelect.onchange = () => {
+              selectedDeviceId = sourceSelect.value;
+            };
+            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+            sourceSelectPanel.style.display = 'block'
+          }
+          // touchstart handler 
+          document.getElementById('startButton').addEventListener("touchStart", onlyTouch, false);  
+    
+          function onlyTouch(ev)
+          { 
+            document.getElementById('result').textContent = 'clicked';
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+    
+          // click event handler 
+          document.getElementById('startButton').addEventListener("click", onlyClick, false);  
+    
+          function onlyClick(ev)
+          {
+            //alert("hii"); 
+            document.getElementById('result').textContent = 'clicked';
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+          
+          document.getElementById('resetButton').addEventListener('click', () => {
+            codeReader.reset()
+            document.getElementById('result').textContent = '';
+            console.log('Reset.')
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    })
+  </script>
+
+</body>
+
+</html>

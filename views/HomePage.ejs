@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Welcome to DA Scanner
+	</title>
+</head>
+<body>
+	<h1> <%= title %> </h1>
+
+	<form action="/home/authUser" method="POST">
+        UserID : <input type="text" name="userID"/><br/>
+		Password: <input type="password" name="password"/> <br>
+		<%if (error) {%> <%=error%> <%}%>
+        <button type="submit" value="Submit">SUBMIT</button>
+
+
+    </form>
+</body>
+</html>

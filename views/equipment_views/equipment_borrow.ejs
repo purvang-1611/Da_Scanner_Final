@@ -1,0 +1,444 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/homepageSAC.css"></link>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script type="text/javascript" src="/javascripts/homepageSAC.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
+    <script type="text/javascript">
+
+
+function CheckQR(id,status)
+    {
+      $.ajax(
+     {
+       type:'post',
+       url:'/scanqr/',
+         
+         data:{
+          id: id,
+         status:status,
+         mes: "call from ajax",
+         },
+         success:function(data)
+          {
+              let s1=Number(data[0]._id);
+              let batch_year=Math.trunc(s1/100000);
+              let batch_id=Math.trunc(s1/1000)%100;
+              let stu_id=Math.trunc(s1%1000);
+              //alert(batch_year);
+              //alert(batch_id);
+              //alert(stu_id);
+              
+              var x=Date.now();
+              var dat_obj=new Date(x);
+              var year=dat_obj.getFullYear();
+              //alert("final"+year);
+              if(batch_id==01)
+              {
+               if(batch_year<=year && batch_year>=year-4)
+               {
+                document.getElementById('studentId').value = data[0]._id;
+                
+                document.getElementById('hid-div').hidden=false;
+                document.getElementById('scan-div').hidden=true;
+                document.getElementById('sid').value=data[0]._id;
+           
+                  
+                  
+
+                  
+               }
+               else{
+            
+                 document.getElementById('sid2').innerHTML="*ID is Invalid";
+               }
+             }
+             else if(batch_id==11 || batch_id==12)
+             {
+                if(batch_year<=year && batch_year>=year-2)
+                {
+                  document.getElementById('studentId').value = data[0]._id;
+                
+                  document.getElementById('hid-div').hidden=false;
+                  document.getElementById('scan-div').hidden=true;
+                  document.getElementById('sid').value=data[0]._id;
+           
+                }
+                else
+                {
+               
+                  document.getElementById('sid2').innerHTML="*ID is Invalid";
+                }
+             }
+             else{
+               
+               document.getElementById('sid2').innerHTML="*ID is Invalid";
+             } 
+
+            },
+            error:function(RXHDR,statusText,error)
+            { 
+              let err=RXHDR.responseText;
+              document.getElementById('sid2').innerHTML=err;
+            }   
+          
+             
+         
+       });
+     }
+    
+    
+  function verifyme()
+  {
+    var id = document.getElementById("studentId").value;
+     
+      CheckQR(id,2);
+
+  }
+    function decodeOnce(codeReader, selectedDeviceId)
+    {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) =>
+      {
+       
+        var decryptedID='';
+              $.ajax({
+                  type: 'get',
+                  url: '/decryptID/'+result.text,
+                  
+                  
+
+                  success: function(data){
+                    decryptedID = data;
+                    alert(decryptedID);
+                    
+                    let s1=Number(decryptedID);
+                  }
+                })
+
+
+        setTimeout(()=>{
+          
+
+        CheckQR(decryptedID,1);
+        },1000)
+        
+      })
+      .catch((err) =>
+      {
+        console.error(err);
+      })
+    }
+   
+    window.addEventListener('load', function ()
+    {
+      let selectedDeviceId;
+      const codeReader = new ZXing.BrowserQRCodeReader()
+      console.log('ZXing code reader initialized')
+      codeReader.getVideoInputDevices()
+        .then((videoInputDevices) => {
+          const sourceSelect = document.getElementById('sourceSelect')
+          selectedDeviceId = videoInputDevices[0].deviceId
+          if (videoInputDevices.length >= 1) {
+            videoInputDevices.forEach((element) => {
+              const sourceOption = document.createElement('option')
+              sourceOption.text = element.label
+              sourceOption.value = element.deviceId
+              sourceSelect.appendChild(sourceOption)
+            })
+            sourceSelect.onchange = () => {
+              selectedDeviceId = sourceSelect.value;
+            };
+            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+            sourceSelectPanel.style.display = 'block'
+          }
+         
+          document.getElementById('startButton').addEventListener("touchStart", onlyTouch, false);  
+    
+          function onlyTouch(ev)
+          { 
+            document.getElementById('result').textContent = 'clicked';
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+    
+        
+          document.getElementById('startButton').addEventListener("click", onlyClick, false);  
+    
+          function onlyClick(ev)
+          {
+           
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+          
+          document.getElementById('resetButton').addEventListener('click', () => {
+            codeReader.reset()
+            document.getElementById('result').textContent = '';
+            console.log('Reset.')
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    })
+
+
+
+
+
+
+
+
+    function clearme()
+    {
+      window.location.href="/equipment";
+    }
+
+
+
+    
+        function submitfun(){
+          
+            const equipmentid=document.getElementById('sel1').value;
+            const studentid=document.getElementById('sid').value;
+            const qty=document.getElementById('qty1').value;
+            if(document.getElementById('r1').checked)
+            {
+              if(confirm("Are you sure you want to return?"))
+              {
+                //console.log("yes");
+                // window.location.href="/equipment/"+equipmentid+"/"+studentid+"/"+qty;
+                $.ajax({
+                  type: 'get',
+                  url: '/equipment/'+equipmentid+"/"+studentid+"/"+qty,
+                  
+                  success: function(data){
+                    console.log(data);
+                    let loan_amount = data;
+
+                    alert("Loan Amount  : "+loan_amount);
+                    window.location.href="/equipment";
+                    
+                  }
+                })
+               
+              }
+              else{
+                console.log("no");
+              }
+            }
+            else{
+              window.location.href="/equipment/"+equipmentid+"/"+studentid+"/"+qty;
+            }
+       
+        }
+        let available_item=0;
+        let equ_id="";
+        function v1()
+        {
+   
+         
+          var x=document.getElementById('sel1');
+          var y=x.options[x.selectedIndex].getAttribute('data-avl');
+      
+          available_item=Number(y);
+          }
+
+        
+       
+        function v2()
+        {
+         
+          if(!document.getElementById("r1").checked)
+          {
+
+
+          var y=document.getElementById('qty1').value;
+          var z=Number(y);
+         
+        
+        
+          if(z>available_item)
+          {
+            document.getElementById('error-qty').innerHTML="Available Item : "+available_item;
+            document.getElementById('qty1').focus();
+            document.getElementById('sub1').disabled=true;
+            document.getElementById('scan').disabled=true;
+          }
+          else{
+            document.getElementById('error-qty').innerHTML="";
+            document.getElementById('sub1').disabled=false;
+            document.getElementById('scan').disabled=false;
+          }
+        }
+        else{
+          document.getElementById('sub1').disabled=false;
+            document.getElementById('scan').disabled=false;
+        }
+        }
+
+    </script>
+    <style>
+      
+    </style>
+    </head>
+    <body>
+        
+        
+      <%- include('sac_header') %>
+    <div class="d1">
+  
+    <form align="center"  name="sacForm" id="sacForm">
+        <br/>
+        <h2 class="h11" style="color:#0060b4">SAC HOMEPAGE</h2>
+        <div id="scan-div">
+          
+          
+             
+        
+        
+              <table align="center">
+                <tr align="center">
+                  <td>
+                    <button type="button"  id="startButton" class="btn3"> Start </button> 
+                  </td>
+                  <td>
+                    <button type="button" id="resetButton" class="btn3"> Reset </button>
+                  </td>
+                </tr>
+                <tr align="center">
+                  <td colspan="2">
+                    <video  width="60%" height="40%" style="border: 1px solid gray" id="video"></video>
+                  </td>
+                </tr>
+               <tr align="center">
+                 <td colspan="2">
+                  <label class="sel1" style="color: #0060b4;" >OR Enter Manually:</label>
+
+                 </td>
+              
+               </tr>
+               <tr>
+                 <td>
+                   <label class="sel1" style="color:#0060b4">
+                  StudentId:
+                </label>
+                 </td>
+                 <td>
+                  <pre><input type="text" name="studentId" style="border: 1px solid black;" class="sid" id="studentId"></pre>
+                  <span id="sid2" style="color: red"></span>
+                 </td>
+                 
+               </tr>
+               <tr align="center">
+                 <td colspan="2">
+                  <button class="btn3" id="verify" onclick="verifyme()">Verify</button>
+                 </td>
+               </tr>
+               <tr>
+                 <td id="sourceSelectPanel" style="display:none">
+                    <label style="color: #0060b4;" class="sel1" for="sourceSelect">Change video source:</label>
+                 </td>
+                 <td>
+                    <select id="sourceSelect" style="max-width: 300px;" class="sel">
+                    </select>
+                  
+            
+                 </td>
+               </tr>
+               <tr>
+                 <td>
+                  <label style="color:#0060b4" class="sel1" for="decoding-style"> Decoding Style:</label>
+                 </td>
+                 <td>
+                  <select id="decoding-style" style="max-width: 300px;" size="1" class="sel">
+                    <option value="once">Decode once</option>
+                    
+                  </select>
+                 </td>
+               </tr>
+
+              </table>
+          </div>
+        <div id="hid-div" hidden>
+        <table align="center">
+        <tr>
+        <td>
+          <input type="radio" name="r1" id="r1" value="return" checked >return
+          </td>
+          <td>
+          <input type="radio" name="r1" id="r2" value="issue">issue
+        </td>
+        </tr>
+        <tr>
+          
+            <td><label class="sel1">Type of equipment: </label></td>
+            
+            <td><select required id="sel1" class="sel" name="equipmentID" onchange="v1()">
+              
+                <option value="">Select equipment</option>
+                <% data.stock.forEach(equipment=>{%>
+    
+                        <option data-avl="<%= equipment.NumberOfAvailable %>" value="<%= equipment._id %>"><%= equipment.name %></option>
+                        
+                   
+                <% }) %>
+                </select>
+              
+                
+            </td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td><label class="qty">Quantity: </label></td>
+            <td><input type="number" class="qty1" id="qty1"  value=1 onkeyup="validateForm();v2();" required name="quantity"></td>
+            
+        </tr>
+        <tr>
+            <td></td>
+            <td><span id="error-qty" style="color: red" ></span></td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td><label class="sid1">Student ID:</label></td>
+            <td><input type="text" name="studentID" disabled class="sid" id="sid" onkeyup="username()"  onkeypress="return isNumberKey(event)" required></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td><span id="error-ID" style="color: red"></span></td>
+        </tr>
+
+      
+        <tr align="center">
+
+        <td><button type="button" id="sub1" class="btn3"  onclick="submitfun()">Submit</button></td>
+        <td><button type="button" class="btn4" onclick="clearme()">Clear</button></td>
+    </tr>
+    </table>
+  </div>
+    <br/>
+    <br/>
+    </form>
+    </div>
+    <%- include('../footer') %>
+    </body>
+    </html>

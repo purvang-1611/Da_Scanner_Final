@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+
+    </head>
+    <body>
+        <%- include('header') %>
+        
+        <div class="container">
+        <h4 style="text-align:center;padding: 10px;color:#0060b4">Equipment Borrower history</h4>
+        
+        <div class="table-responsive" style="padding: 10px;">
+            <table class="table" style="font-size: medium;">
+                <thead style="background-color: #20232e;color: white;">
+                    <th>Equipment Name</th>
+                    <th>Issue Date</th>
+                    <th>Return Date</th>
+                    <th>Quantity</th>
+                    <th>Loan</th>
+                </thead>
+                <tbody>
+
+
+
+                    <% for(records of  pending_records) {%>
+                        <tr>
+                            <td><%= records.equipment_borrows[0].name %></td>
+                            <td><%= records.issue_date %></td>
+                            <td>-</td>
+                            <td><%= records.quantity %></td>
+                            <td>-</td>
+                        </tr>
+                        <% } %>
+
+
+                    <% for(records of  sac_records) {%>
+                    <tr>
+                        <td><%= records.equipment_borrows[0].name %></td>
+                        <td><%= records.issue_date %></td>
+                        <td><%= records.return_date %></td>
+                        <td><%= records.quantity %></td>
+                        <td><%= records.loan %></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <%- include('../footer') %>
+    </body>
+</html>

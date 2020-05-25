@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Scan QR From gate
+	</title>
+	<style type="text/css">
+		p
+		{
+			color: red
+		}
+	</style>
+</head>
+<body>
+	<%-include('adminHeader') %>
+	<%
+	var fname,lname,email,stuID;
+	if(data){
+		fname=data.fName;
+		lname=data.lName;
+		email=data.userEmailId;
+		stuID=data._id;
+	}
+	
+	var hey = "asdasd";
+
+%>
+<div class="page-content-body" id="content-body">
+		   	<br/><br/>
+				<center><h2 class="title">Employee Registration</h2></center>
+				<br/>
+				<form method="POST" action="/admin/addEmpUser" onSubmit = "return validate(this)">
+					<div class="form-group row " style="margin-left: 10px;">
+						<label for="First Name" class="col-sm-2 col-form-label">First Name</label>
+						<input class="form-control col-sm-4" type="text" placeholder="FIRST NAME"  onkeypress="return isCharKey(event)" name="fName" id="fname"  value="<%=fname%>" required>
+					</div>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+							<label for="Last Name" class="col-sm-2 col-form-label">Last Name</label> 
+							<input class="form control col-sm-4" type="text" placeholder="LAST NAME" name="lName" id="lname" value="<%=lname%>" required>
+					</div>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+							<label for="Email ID" class="col-sm-2 col-form-label">Email ID</label> 
+							<input class="form-control col-sm-4" type="text" placeholder="Email" name="userEmailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" required>
+					</div>
+					<span id="error-Email" style="color:red;"></span>   
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+						<label for="Employee ID" class="col-sm-2 col-form-label">Employee ID</label> 
+							 <input class="form-control col-sm-4" type="text" placeholder="Employee ID Number" onkeypress="return isNumberKey(event)"  onfocusout="IDCheck()" maxlength="9"  name="userId" id="stuID"  value="<%=stuID%>" required>
+					</div>
+					<span id="error-ID" style="color:red;"></span>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+						<label for="Emp Type" class="col-sm-2 col-form-label">Employee Type</label>
+						<select name="userTypeId" class="form-control col-sm-4" required>
+							<% for(let usertype of userTypes) { %>
+								<% if(usertype._id != 5) {%>
+								<option value="<%= usertype._id %>"><%= usertype.userTypeName  %></option>
+								<%}%>
+							<% } %>
+						</select>
+						
+					</div>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+						<label for="Password" class="col-sm-2 col-form-label">Password</label>
+							<input class="form-control col-sm-4" type="password" placeholder="Password"  name="password" id="Pass1" required>
+				   </div>
+				   <br/>
+				   <div class="form-group row" style="margin-left: 10px;">
+					<label for="Password" class="col-sm-2 col-form-label">Confirm Password</label>
+						<input class="form-control col-sm-4" type="password" placeholder="Re-Type Password" onfocusout="validate()" name="confirm_password" id="Pass2" required>
+					</div>
+					<span id="error-Password" style="color:red;"></span>   
+					<br/>
+					<br/>
+					
+					<button type="submit" class="btn btn-primary" style="margin-left: 20px" id="sub">Add Employee</button>
+								</form>
+	
+	</div>
+	<script src="/js/Registration_JS/reg.js"></script>
+    <!-- Jquery JS-->
+    
+    <script src="/js/Registration_JS/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="/js/Registration_JS/select2.min.js"></script>
+    <script src="/js/Registration_JS/moment.min.js"></script>
+    <script src="/js/Registration_JS/daterangepicker.js"></script>
+   
+    <script src="/js/Registration_JS/global.js"></script>
+</body>
+</html>
+
+<!--
+	<h1> <%= title %> </h1>
+	<form method="POST" action="/admin/addEmpUser">
+		EMPID : <input type="number" name="userId" required><br><br>
+		<% if(errors) { if(errors.userId) { %>
+			<p><%= errors.userId.msg %> </p>
+	    <%  }} %>
+
+		userEmailId : <input type="email" name="userEmailId" required><br><br>
+		<% if(errors) { if(errors.userEmailId) { %>
+			<p><%= errors.userEmailId.msg %> </p>
+	    <%  }} %>
+
+		first name : <input type="text" name="fName" required><br><br>
+		<% if(errors) { if(errors.fName) { %>
+			<p><%= errors.fName.msg %> </p>
+	    <%  }} %>
+
+		last name : <input type="text" name="lName" required><br><br>
+		<% if(errors) { if(errors.lName) { %>
+			<p><%= errors.lName.msg %> </p>
+	    <%  }} %>
+
+		userType: <select name="userTypeId" required>
+			<% for(let usertype of userTypes) { %>
+				<% if(usertype._id != 5) {%>
+				<option value="<%= usertype._id %>"><%= usertype.userTypeName  %>
+				</option>
+				<%}%>
+			<% } %>
+		</select><br><br>
+		<% if(errors) { if(errors.userTypeId) { %>
+			<p color=red><%= errors.userTypeId.msg %> </p>
+	    <%  }} %>
+
+		password : <input type="password" name="password" required><br><br>
+		<% if(errors) { if(errors.password) { %>
+			<p ><%= errors.password.msg %> </p>
+	    <%  }} %>
+
+		Confirm password : <input type="password" name="passwordAgain" required>
+		<br><br>
+		<% if(errors) { if(errors.passwordAgain) { %>
+			<p><%= errors.passwordAgain.msg %> </p>
+	    <%  }} %>
+
+		<button type="Submit" value="Submit">Submit</button>
+	</form>
+-->

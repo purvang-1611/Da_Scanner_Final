@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!--<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap.min.css" />-->
+
+
+<style>
+       
+</style>
+
+</head>
+<body>
+
+       <!-- <div class="vertical-nav bg-dark" id="sidebar">
+                <div class="py-4 px-3 mb-4 bg-dark">
+                  <div class="media d-flex align-items-center"><img src="/pic/course-bg-3.jpg" style="max-width: 100%;"/>
+                  </div>
+                </div>
+        </div>
+        
+
+        <!--<div id="sidebar" > 
+                <ul >
+                        <li><img src="/pic/course-bg-3.jpg" alt="daiict" style="max-width: 100%;"></li>
+                        <li><a href="Home.html">Home</a></li>
+                        <li><a href="/admin/loadAllEmpUsers">Employee</a></li>
+                        <li><a href="Student.html">Student</a></li>
+                        <li><a href="Report.html">Report Generate</a></li>
+                        
+                </ul>
+        </div>
+<div id="content" class="page-content">
+        <nav class="navbar navbar-expand-sm bg-dark">
+                <ul class="navbar-nav">
+                        <li class="nav-item">
+                                <a class="nav-link" href="Profile.html">My Profile</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" href="ChangePassword.html">Change Password</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" href="Login.html">Logout</a>
+                        </li>
+                </ul>
+        </nav> -->
+<%-include('adminHeader') %>
+<div class="page-content-body" id="content-body">
+          <br/><br/>
+        <div class="row-fluid">
+                <h2 style="color: black">Availabe Seats in Library</h2>
+                <img src="/pic/chair.png" width="100px" height="100px">
+                <h3 style="display:inline"><%=avl_seats%></h3></h3 style="display:inline">
+        </div>
+        <br/><br/>
+        <div class="equiptable">
+                        <h3>Equipment Availibity</h3>
+                <table style="width:80%">
+                        <tr>
+                                <th style="font-size:15px;color:black;">Name Of Equipment</th>
+                                <th style="font-size:15px;color:black;">Available Count</th> 
+                        </tr>
+                        <% for (item of inventoryData) {%>
+                        <tr>
+                                <td><%=item.name%></td>
+                                <td><%=item.NumberOfAvailable%></td>  
+                        </tr>
+                        <%}%>
+                        
+                </table>
+        </div>
+  
+
+        <h2 style="margin: 20px 10px"> Add a course </h2>
+        <form action="/admin/addCourse" id='courseForm'>
+        <div class="form-group row" style="margin-left: 10px">
+          <label for="courseID" class="col-sm-2 col-form-label">CourseID:</label>
+          <input type="number" class="form-control col-sm-4" id="courseID" name="courseID">
+          <span id="error-course" style="color:red;">
+               
+            </span> 
+        </div>
+        <div class="form-group row" style="margin-left: 10px">
+          <label for="courseName" class="col-sm-2 col-form-label">Course Name:</label>
+          <input type="text" class="form-control col-sm-4" id="courseName" name="courseName">
+          <span id="error-courseName" style="color:red;">
+               
+        </span> 
+        </div>
+        <div class="form-group row" style="margin-left: 10px">
+                <label for="Duration" class="col-sm-2 col-form-label">Duration (in Years):</label>
+                <input type="number" class="form-control col-sm-4" id="duration" name="duration">
+                <span id="error-duration" style="color:red;">
+               
+                </span> 
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="margin-left: 20px" id="sub">Add course</button>
+        <br>
+        <span id="success" style="color:green;  font-size: 15px;"></span>
+        <span id="error" style="color:red; font-size: 15px;"></span>
+               
+        </span> 
+      </form> 
+
+<!--</div>--> 
+</div>
+<!--Footer-part-->
+
+<!--end-Footer-part-->
+
+<script src="/js/Dashboard_JS/jquery.min.js"></script> 
+<script src="/js/Dashboard_JS/jquery.ui.custom.js"></script> 
+<!--<script src="/js/Dashboard_JS/bootstrap.min.js"></script>--> 
+<script src="/js/Dashboard_JS/jquery.uniform.js"></script> 
+<script src="/js/Dashboard_JS/select2.min.js"></script> 
+<script src="/js/Dashboard_JS/jquery.dataTables.min.js"></script> 
+<script src="/js/Dashboard_JS/matrix.js"></script> 
+<script src="/js/Dashboard_JS/matrix.tables.js"></script>
+<script>
+        $(document).ready(function() {
+            $('#courseForm').on('submit', function(e){
+              // validation code here
+              //alert("hey");
+                let valid=0;
+                let courseID = $('#courseID').val();
+                let course = $('#courseName').val();
+                let dur = $('#duration').val();
+               
+                //alert(courseID.length + " " + course.length + " "+ dur.length)
+                if(courseID.length == 2 && course.length > 4 && dur.length >=1 )
+                {
+                        valid=1;
+                        e.preventDefault();
+                        
+                        $.ajax({
+                        type: 'post',
+                        url: '/admin/addCourse',
+                        data: {
+                                courseID: courseID,
+                                courseName: course,
+                                duration: dur,
+                        },
+                        success: function(data){
+                        let confirm = data;
+                        //$('#success').html(confirm);
+                        //alert(confirm);
+                        },
+                        error: function(jqXHR, textStatus, error)
+                        {
+                               //alert("asdasd" + error);
+                               //console.log("heyuuuuu" + jqXHR.responseText);
+
+                               let err = jqXHR.responseText;
+                               $("#error").html(err);
+                                //console.log(jqXHR);
+                               //console.log(textStatus);
+                               
+                        }
+                
+                        });
+                }
+
+                if(courseID.length == 2 )
+                {
+                        $("#error-course").html("");
+                }
+                else{
+                        $("#error-course").html("Course ID should be of 2 digits");
+                }
+
+                if(course.length > 4)
+                {
+                        $("#error-courseName").html("");
+                }
+                else{
+                        $("#error-courseName").html("Course name too short");
+                }
+
+                if(dur.length >=1 )
+                {
+                        $("#error-duration").html("");
+                }
+                else{
+                        $("#error-duration").html("Course duration is empty");
+                }
+              if(valid==0) {    
+                e.preventDefault();
+
+              }
+            });
+          });
+        </script>
+</body>
+</html>
+
+

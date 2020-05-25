@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<link>
+  <title>QR scanner</title>
+  
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
+    <script type="text/javascript">
+
+
+function CheckQR(id,status)
+    {
+    $.ajax(
+     {
+         type:'post',
+         url:'/scanqr/',
+         data:{
+          id: id,
+         status:status,
+         mes: "call from ajax",
+         },
+    success:function(data){
+    
+      let s1=Number(data[0]._id);
+             let batch_year=Math.trunc(s1/100000);
+               let batch_id=Math.trunc(s1/1000)%100;
+               let stu_id=Math.trunc(s1%1000);
+               alert(batch_year);
+               alert(batch_id);
+               alert(stu_id);
+              
+              var x=Date.now();
+              var dat_obj=new Date(x);
+              var year=dat_obj.getFullYear();
+              alert("final"+year);
+              
+             if(batch_id==01)
+             {
+               if(batch_year<=year && batch_year>=year-4)
+               {
+             
+                 window.location.href="/lib_tmp/"+data[0]._id;  
+               }
+               else{
+                 //document.write("invalid");
+                 document.getElementById('sid2').innerHTML="*ID is Invalid";
+               }
+             }
+             else if(batch_id==11 || batch_id==12)
+             {
+              
+                if(batch_year<=year && batch_year>=year-2)
+                {
+                
+                  window.location.href="/lib_tmp/"+data[0]._id;
+                }
+                else
+                {
+                  document.getElementById('sid2').innerHTML="*ID is Invalid";
+                }
+             }
+             else
+             {
+                document.getElementById('sid2').innerHTML="*ID is Invalid";
+             } 
+
+             },
+             error:function(RXHDR,statusText,error)
+            { 
+              let err=RXHDR.responseText;
+              document.getElementById('sid2').innerHTML=err;
+            }   
+          
+             //document.getElementsByName('studentID').disabled=true;
+
+         
+       });
+     }
+    
+    
+         
+       
+    
+    
+  function verifyme()
+  {
+    var id = document.getElementById("studentId").value;
+     
+      CheckQR(id,2);
+
+  }
+  
+    function decodeOnce(codeReader, selectedDeviceId)
+    {
+      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) =>
+      {
+       
+        var decryptedID;
+              $.ajax({
+                  type: 'get',
+                  url: '/decryptID/'+result.text,
+                  
+                  
+
+                  success: function(data){
+                    decryptedID = data;
+                    alert(decryptedID);
+                  
+                    let s1=Number(decryptedID);
+                  }
+                })
+
+
+        setTimeout(()=>{
+          document.getElementById('studentId').value = decryptedID.substr(0,9);
+
+        CheckQR(decryptedID,1);
+        },1000)
+        
+      })
+      .catch((err) =>
+      {
+        console.error(err);
+      })
+    }
+   
+    window.addEventListener('load', function ()
+    {
+      let selectedDeviceId;
+      const codeReader = new ZXing.BrowserQRCodeReader()
+    
+      codeReader.getVideoInputDevices()
+        .then((videoInputDevices) => {
+          const sourceSelect = document.getElementById('sourceSelect')
+          selectedDeviceId = videoInputDevices[0].deviceId
+          if (videoInputDevices.length >= 1) {
+            videoInputDevices.forEach((element) => {
+              const sourceOption = document.createElement('option')
+              sourceOption.text = element.label
+              sourceOption.value = element.deviceId
+              sourceSelect.appendChild(sourceOption)
+            })
+            sourceSelect.onchange = () => {
+              selectedDeviceId = sourceSelect.value;
+            };
+            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+            // sourceSelectPanel.style.display = 'block'
+          }
+          // touchstart handler 
+          document.getElementById('startButton').addEventListener("touchStart", onlyTouch, false);  
+    
+          function onlyTouch(ev)
+          { 
+            document.getElementById('result').textContent = 'clicked';
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+    
+          // click event handler 
+          document.getElementById('startButton').addEventListener("click", onlyClick, false);  
+    
+          function onlyClick(ev)
+          {
+            //alert("hii"); 
+            //document.getElementById('result').textContent = 'clicked';
+            const decodingStyle = document.getElementById('decoding-style').value;
+            if (decodingStyle == "once") {
+              decodeOnce(codeReader, selectedDeviceId);
+            } else {
+              decodeContinuously(codeReader, selectedDeviceId);
+            }
+            console.log(`Started decode from camera with id ${selectedDeviceId}`);
+            ev.preventDefault(); 
+          }
+          
+          document.getElementById('resetButton').addEventListener('click', () => {
+            codeReader.reset()
+            document.getElementById('result').textContent = '';
+            console.log('Reset.')
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    })
+
+ 
+
+        function f2()
+        {
+          alert('Removed all in entries');
+          window.location.href="/lib_tmp/lib_tmp_out/";
+          
+        }
+        function f1()
+        {
+          document.getElementById('scan-div').hidden=false;
+        }
+    </script>
+     <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+    <link rel="stylesheet" type="text/css" href="/stylesheets/homepageLIB.css">
+  </link>
+    
+    
+    
+    
+     
+<style>
+  table {
+  
+  table-layout: fixed;
+  text-align: left;
+  width:80px;
+  overflow: hidden;
+  margin-top: 13px;
+  border-collapse: collapse;
+}
+tr{
+  border: 0;
+}
+th,
+td {
+  /* border: 1px solid black; */
+  width: 80px;
+  overflow: hidden;
+  
+}
+td select{
+  width: 100%;
+  overflow: hidden;
+  
+}
+@media only screen and (min-width: 1024px){
+.mob_view{
+  display: none;
+}
+}
+
+
+</style>
+
+</head>
+<body>  
+    <!-- <button id="btn" onclick= "f1()"> Scan QR </button>  
+    <button onclick="f2()"> out time </button>   -->
+    <!-- <br/>
+    <video id="preview"></video> -->
+    
+	
+
+    <%- include('lib_header') %> 
+<div class="container-fluid">
+<form align="center" method="POST"action="#">
+	
+	<h1   style="color: #0060b4;font-weight: bolder;">Library</h1>
+	
+	
+	<label  style="color: #0060b4;">Available seats: </label>
+	<img src="http://localhost:3000/images/chair.png" width="100px" height="100px">
+        <h3 style="display:inline;color:#0060b4"><%= avl_seats %></h3>
+  <br>
+  
+<div class="row">
+  <div class="col-md-6">
+	<button type="button" id="startButton" class="lib_btn" onclick="f1()">Scan QR Code</button>
+  
+  <button type="button" class="lib_btn" onclick="f2()"   >Clear all IN enteriess </button>
+  <br>
+  <span id="error-ID" style="color:red;"></span>
+  <div id="scan-div" hidden>
+          
+        
+    <table align="center" style="width: 100%;">
+      <tr align="center">
+        
+        
+      </tr>
+      <tr align="center">
+        <td colspan="2"  style="border: none;">
+          <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+        </td>
+      </tr>
+     <tr align="center">
+       <td colspan="2">
+        <label  style="color: #0060b4;">OR Enter Manually:</label>
+
+       </td>
+    
+     </tr>
+     <tr>
+       <td>
+         <label style="color: #0060b4;">
+        StudentId:
+      </label>
+       </td>
+       <td>
+        <input type="text" name="studentId" class="sid" id="studentId">
+        <span id="sid2" style="color: red"></span>
+       </td>
+       
+     </tr>
+     <tr align="center">
+       <td>
+        <button type="button" class="lib_btn1" id="verify" onclick="verifyme()">Verify</button>
+       </td>
+       <td>
+        <button type="button" id="resetButton" class="lib_btn1"> Reset </button>
+      </td>
+     </tr>
+     <tr class="mob_view">
+       <td >
+          <label  for="sourceSelect">Change video source:</label>
+       </td>
+       <td>
+          <select id="sourceSelect" class="mdb-select md-form">
+          </select>
+        
+  
+       </td>
+     </tr>
+     <tr class="mob_view">
+       <td>
+        <label  for="decoding-style"> Decoding Style:</label>
+       </td>
+       <td>
+        <select id="decoding-style" style="max-width: 300px;" size="1">
+          <option value="once">Decode once</option>
+          
+        </select>
+       </td>
+     </tr>
+
+    </table>
+
+    
+
+  
+
+
+</div>
+</div>
+
+<div class="col-md-6">
+  <div class="table-responsive">
+  <table class="table" style="font-size: medium;width: 100%;">
+    <thead style="background-color:#20232e;color: white;" >
+      <tr>
+        
+        <th scope="col">Student id</th>
+        <th scope="col">In time</th>
+        <th scope="col">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for(student of students) {%>
+        <tr>
+        <td><%= student.user_id %></td>
+        <td><%= student.in_time %></td>
+        <td><%= student.date %></td>
+        
+        
+        </tr>
+        
+        <% } %>
+      
+    </tbody>
+  </table>
+</div>
+
+</div>
+</div>
+
+<br>
+ 
+
+	<script language="javascript" type="text/javascript">
+		function myalert()
+		{ 
+				alert("Available seats are: " )
+		} 
+
+
+	</script>
+<br/>
+<br/>
+</form>
+</div>
+<%- include('../footer') %> 
+</body>
+</html>

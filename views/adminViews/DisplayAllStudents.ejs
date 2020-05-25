@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Admin Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!--<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap.min.css" />-->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
+
+<style>
+       
+</style>
+
+</head>
+<body>
+
+<%-include('adminHeader') %>
+<div class="page-content-body" id="content-body">
+          <br/><br/>
+        <div class="row-fluid">
+                <h2 style="color: black"><%=title%></h2>
+                
+		</div>
+		<table class="table table-bordered" id="EmpTable" style="width:80%">
+			<thead class="thead-dark">
+					<tr>
+							<th >Student ID</th>
+							<th >Name</th>
+							<th >Email</th>
+                            <th >Course</th>
+                            <th>Batch</th>
+							<th >Disable/Enable</th>
+					</tr>
+			  </thead>
+			  <tbody>
+				  		<% for(user of users){ %>
+						 <tr>
+							<td style="color:black"><%=user._id %></td>
+							<td style="color:black"><%=user.fName%> <%=user.lName %></td>
+                            <td style="color:black"><%=user.userEmailId %></td>
+                            <td><%=user.courseName%></td>
+                            <td><%=user.batchYear%></td>
+                            
+							<td style="color:black"><i class="fas fa-user-times"></i> &nbsp; 
+							
+							<i class="fas fa-user" onclick="resetStudent('<%=user._id%>')"></i></td>
+						  </tr>   
+						  <%} %>  
+			  </tbody>
+	  </table>
+		<br/>
+		
+		
+		
+  
+
+
+<!--</div>--> 
+</div>
+<!--Footer-part-->
+
+<!--end-Footer-part-->
+
+<!--<script src="/js/Dashboard_JS/jquery.min.js"></script> 
+<script src="/js/Dashboard_JS/jquery.ui.custom.js"></script>
+<script src="/js/Dashboard_JS/bootstrap.min.js"></script>
+<script src="/js/Dashboard_JS/jquery.uniform.js"></script> 
+<script src="/js/Dashboard_JS/select2.min.js"></script> 
+<script src="/js/Dashboard_JS/matrix.js"></script> 
+<script src="/js/Dashboard_JS/matrix.tables.js"></script>
+<script src="/js/Dashboard_JS/jquery.dataTables.min.js"></script> -->
+<script src = "https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src = 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
+
+<script>
+$(document).ready( function () {
+    $('#EmpTable').DataTable();
+} );
+
+function resetStudent(id)
+{
+	alert(id);
+	$.ajax({
+            type: 'post',
+            url: '/admin/resetStudent/'+id,
+             success: function(data){
+						 alert(data);
+						 //alert("heyyy");
+                        let confirm = data;
+                        //$('#success').html(confirm);
+                        //alert(confirm);
+                        },
+            error: function(jqXHR, textStatus, error)
+                        {
+                               //alert("asdasd" + error);
+                               //console.log("heyuuuuu" + jqXHR.responseText);
+
+                               let err = jqXHR.responseText;
+							 	alert(err);  
+							   //$("#error").html(err);
+                                //console.log(jqXHR);
+                               //console.log(textStatus);
+                               
+                        }
+                
+});
+
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+<!--
+	<h1> <%= title %> </h1>
+	<% for(user of users) { %>
+		<h2><%= user._id %></h2>
+		<p><%= user.userTypeId %>
+		<p><%= user.userEmailId %>
+		<p><%= user.fName %>
+		<p><%= user.lName %>
+		<p><%= user.courseName %>
+		<p><%= user.batchYear %>
+		<p><%= user.password %>
+		<br>
+	<% } %>
+-->

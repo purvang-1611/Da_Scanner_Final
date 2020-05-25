@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Document</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"></link> -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+
+</head>
+<body>
+  <%- include('header') %> 
+    
+<div class="container">
+<div class="row" style="padding:50px">
+  
+    <div class="col-md-6">
+
+        <h2 style="color: #0060b4">Equipment Available</h2>
+        
+        <div class="table-responsive">
+            <table class="table" style="font-size: medium;">
+                <thead style="background-color: #20232e;color: white;">
+                    <th>Equipment Name</th>
+                    <th>Quantity</th>
+                </thead>
+                <tbody>
+                    <% for(inventory of inventories) {%>
+                    <tr>
+                        <td><%= inventory.name %></td>
+                        <td><%= inventory.NumberOfAvailable %></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-6">
+
+        <h2 style="color: #0060b4">Availabe Seats on Library</h2>
+        <img src="http://localhost:3000/images/chair.png" width="100px" height="100px">
+        <h3 style="display:inline"><%= abl_seats %></h3 style="display:inline">
+    </div>
+</div>
+</div>
+
+    <%- include('../footer') %>
+  
+
+</body>
+
+</html>
+
+
+
+
+
+ <!-- <html>
+     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="http://localhost:3000/stylesheets/AdminDashboard_css.css"></link>
+       
+     </head>
+     <body>
+        <div class="topnav" id="myTopnav">
+    
+            <a href="#home" class="active">Home</a>
+            <a href="#news">RegenerateQr</a>
+            <a href="#contact">Log out</a>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+              <i class="fa fa-bars"></i>
+            </a>
+        
+        </div>
+        <script>
+        function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
+        </script>
+     </body>
+ </html> -->
