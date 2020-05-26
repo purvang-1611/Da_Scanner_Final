@@ -37,7 +37,7 @@ userTypeRouter.post("/addUserType", (request, response, next) =>
 		}
 		else
 		{
-			response.redirect("/users/loadAddUser");
+			response.redirect("/userTypes/loadAddUserType");
 		}
 	});
 });

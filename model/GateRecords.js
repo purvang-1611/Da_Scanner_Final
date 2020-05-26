@@ -41,4 +41,4 @@ let gateRecordsSchema = new Schema(
 	}
 });
 
-module.exports = mongoose.model("GateRecords", gateRecordsSchema);
+module.exports = mongoose.model("gaterecords", gateRecordsSchema);

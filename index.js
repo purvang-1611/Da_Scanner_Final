@@ -10,7 +10,7 @@ const passport = require('passport');
 
 const cookieParser = require('cookie-parser');
 const flash = require("connect-flash");
-//const session = require("express-session");
+
 
 // import diff Routes
 //const gateRoute = require("./routes/GateRoutes");
@@ -107,26 +107,7 @@ app.use(function(req, res, next){
 
 // set home route
 // simple get request by user
-var sessionChecker =  (req,res,next)=>{
 
-    let cookie = req.cookies['remember_me'];
-    console.log("cookie " + cookie)
-    if(req.body && req.body.rememberme){
-    if(cookie === undefined)
-    {
-        res.cookie("remember_me",req.user,{maxAge: 7*24*60*60*1000}).send('cookie set');
-        next();
-    }
-    }
-    next();
-    // if(cookie)
-    // {
-    //     res.redirect('/users/loadHomePage');
-    // }
-    
-    
-    
-}
 app.get("/",(request, response) =>
 {
 
@@ -139,9 +120,10 @@ app.get("/",(request, response) =>
 
     }else{
     //response.redirect("/admin/loadAddUser");
+
 	response.render("loginPage",
 	{
-        title: "Helloo, Welcome to DAScanner.",
+        title: "Helloo, Welcome to DA-Scanner.",
         error: request.flash('message')
     });
 }

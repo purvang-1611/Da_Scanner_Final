@@ -26,7 +26,7 @@
 		<h3>NO DATA FOUND</h3>
 	<% } else { %>
 		<table style="width:100%" id="table">
-		  <tr border="1">
+		 <thead>
 		    <th>StudentId</th>
 		    <th>CourseName</th>
 		    <th>InDate</th>
@@ -35,12 +35,13 @@
 		    <th>OutTime</th>
 		    <th>Forgot</th>
 		    <th>VisitorsWithStudent</th>
-		  </tr>
+		  </thead>
+		  <tbody>
 			<% if (messages) { %>
 				<% if(messages.length > 0) { %>
 						<% for(mes of messages) { %>
 							<tr>
-								<td> <%= mes.userID %> </td>
+								<td> <%= mes.userId %> </td>
 								<td> <%= mes.gaterecords.courseName %> </td>
 								<td> <%= mes.inDate %> </td>
 								<td> <%= mes.inTime %> </td>
@@ -52,6 +53,7 @@
 						<% } %>
 				<% } %>
 			<% } %>
+		</tbody>
 		</table>
 	<% } %>	
 	<!-- <img src="/static/Images/DA_logo.png" > -->
@@ -67,7 +69,7 @@
 		var startDate = document.getElementById("startDate").innerHTML;
 		var endDate = document.getElementById("endDate").innerHTML;
 		var img = new Image(50, 50);
-		img.src = "/static/studentStatic/images/DA_logo.png";
+		img.src = "/pic/da_logo.png";
 		var doc = new jsPDF('p', 'pt');
 		var res = doc.autoTableHtmlToJson(document.getElementById('table'));
 		var height = doc.internal.pageSize.height;

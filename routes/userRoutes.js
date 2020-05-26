@@ -43,6 +43,15 @@ var loggedin = function (req,res,next)
 	}
 }
 
+userRouter.get("/myProfile",loggedin,(req,res)=>{
+
+		res.render("myProfile",{
+			title: "My Profile",
+			data: req.user,
+			id: req.user.userTypeId
+		})
+
+})
 userRouter.get("/loadHomePage",loggedin, (req,res)=>{
 	//res.send req.session
 	//console.log(req.user);
@@ -50,12 +59,12 @@ userRouter.get("/loadHomePage",loggedin, (req,res)=>{
 	let user = req.user;
 	let userType= user.userTypeId;
 	if(userType==1){
-
+	
 	res.redirect("/admin");
 	}
 	else if(userType==2)
 	{
-		res.render('GenerateReportForm',{
+		res.render('GateViews/GateScanQR',{
 			title:user.fName + user.lName,
 			route: "gate",
 		});
@@ -214,11 +223,13 @@ userRouter.post('/forgotPass',(req,res,next)=>{
 
 
 
-userRouter.get("/changePassword",loggedin,(req,res)=>{
+userRouter.get("/changePassword/:id",loggedin,(req,res)=>{
+
 	res.render('ChangePassword',{
 		title: req.user.fName + "  " + req.user.lName,
 		error: null,
-		msg: ""
+		msg: "",
+		id: req.params.id
 	})
 });
 
@@ -251,7 +262,8 @@ userRouter.post("/changePassword",loggedin,(req,res) =>{
 				res.render("ChangePassword",{
 					msg: "Password Changed",
 					error: "",
-					title: "Welcome"
+					title: "Welcome",
+					id: req.user.userTypeId
 				})
 			}
 		})
@@ -316,7 +328,7 @@ userRouter.post('/registerStudent',(req,res)=>{
 					id1=id1.toString();
 					id1=id1+Date.now();
 					user.qr_code = id1;
-					user.qr_count = 5 ; //Initially 5 counts available
+					user.qr_cnt = 5 ; //Initially 5 counts available
 
 
 					user.save().then(result=>{

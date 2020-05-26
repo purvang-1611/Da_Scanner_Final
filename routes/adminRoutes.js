@@ -29,6 +29,47 @@ var loggedin = function (req,res,next)
 }
 
 
+userRouter.post("/addCourse",(req,res) =>{
+
+	let cid = req.body.courseID;
+	let courseName = req.body.courseName;
+	let dur = req.body.duration;
+	console.log(cid + dur);
+	Course.findById(cid , (err,doc)=>{
+
+		if(err)
+		{
+			res.status(500).send("Unexpeected error occured");
+			console.log("err " +err);
+		}
+		else if(doc)
+		{
+			res.status(500).send("Course Already Exists");
+			console.log(doc);
+		}
+		else{
+
+			let course = new Course();
+
+			course._id = cid;
+			course.course_name = courseName;
+			course.duration=dur;
+
+			course.save().then( result=>{
+
+				//console.log(result);
+				res.send("Course Added");
+			})
+			.catch(err=>{
+				res.status(500).send("Database Error ");
+				//console.log(err);
+			})
+			
+		}
+	})
+
+
+})
 userRouter.get("/",loggedin,(req,res)=>{
 
 	let libRecords;
@@ -66,47 +107,6 @@ userRouter.get("/",loggedin,(req,res)=>{
 
 // ADD A COURSE TO THE DATABASE
 
-userRouter.post("/addCourse",(req,res) =>{
-
-		let cid = req.body.courseID;
-		let courseName = req.body.courseName;
-		let dur = req.body.duration;
-		//console.log(cid + dur);
-		Course.findById(cid , (err,doc)=>{
-
-			if(err)
-			{
-				res.status(500).send("Unexpeected error occured");
-				console.log("err " +err);
-			}
-			else if(doc)
-			{
-				res.status(500).send("Course Already Exists");
-				console.log(doc);
-			}
-			else{
-
-				let course = new Course();
-
-				course._id = cid;
-				course.course_name = courseName;
-				course.duration=dur;
-
-				course.save().then( result=>{
-
-					//console.log(result);
-					res.send("Course Added");
-				})
-				.catch(err=>{
-					res.status(500).send("Database Error ");
-					//console.log(err);
-				})
-				
-			}
-		})
-
-
-})
 
 // LOADING GENERATE REPORT FORM
 userRouter.get("/loadGenerateReport",loggedin,(request, response)=>
@@ -182,7 +182,8 @@ userRouter.post("/addEmpUser", async (request, response, next) =>
 		}
 		else{
 				try{
-				const hashedPass = await bcrypt.hash(request.body.password,10); //await as async 
+					let pass =request.body.userId.toString() + Date.now();
+				const hashedPass = await bcrypt.hash(pass,10); //await as async 
 		
 					console.log(hashedPass);
 					let user = new User();
@@ -200,7 +201,7 @@ userRouter.post("/addEmpUser", async (request, response, next) =>
 					.then(result=>
 					{
 						//console.log(result);
-						qr.emailEmployee(request.body.userEmailId,request.body.password);
+						qr.emailEmployee(request.body.userEmailId,pass);
 						response.redirect("/admin/loadAllEmpUsers"); //redirect to all emps
 					})
 					.catch(err=>

@@ -1,4 +1,6 @@
+
 const express = require("express");
+const crypto = require('crypto');
 
 const User = require("../model/User");
 const GateRecords = require("../model/GateRecords");
@@ -8,7 +10,38 @@ const date = require('date-and-time'); //formate date and time
 
 const gateRouter = express.Router();
 
-gateRouter.get("/loadGateScanner",(request, response, next) =>
+var loggedin = function (req,res,next)
+{
+    // console.log(req.user);
+    if(req.isAuthenticated())
+    {
+        User.find({_id : req.user._id},function(err,rows){
+            if(err)
+            {
+                res.redirect('/');
+            }
+            else{
+                if(rows[0].userTypeId==2)
+                {
+                    next() // if logged in
+                }
+                else{
+                    res.redirect('/');
+                }
+            }
+        })
+        
+       
+    }
+    else if(req.cookies['remember_me']){
+		req.user = req.cookies['remember_me'];
+		next();
+	}             
+	else
+		res.redirect('/');
+}
+
+gateRouter.get("/loadGateScanner",loggedin,(request, response, next) =>
 {
 	response.render("studentViews/GateScanQR",
 	{
@@ -17,10 +50,27 @@ gateRouter.get("/loadGateScanner",(request, response, next) =>
 	});
 });
 
-gateRouter.post("/checkQR",(request, response, next) =>
+gateRouter.post("/checkQR",loggedin,(request, response, next) =>
 {
-	const userId = request.body.studentId;
+	const id = request.body.studentId;
+	var userId = id;
+	if(isNaN(id))
+	{
+		try
+		{
+			mykey = crypto.createDecipher('aes-128-cbc', 'dascanner');
+			var userId = mykey.update(id, 'hex', 'utf8')
+			userId += mykey.final('utf8');
+		}
+		catch(err)
+		{
+			console.log(err)
+			return response.send("INVALID");
+		}
+	}
+	
 	console.log(request.body.mes);
+	console.log("\nid: "+userId);
 	User.findById(userId,{password:0},(err, user)=>
 	{
 		if(err)
@@ -42,7 +92,7 @@ gateRouter.post("/checkQR",(request, response, next) =>
 	});
 });
 
-gateRouter.post("/insertRecord",(request, response, next) =>
+gateRouter.post("/insertRecord",loggedin,(request, response, next) =>
 {
 	console.log("inside insertRecord");
 	let userId = request.body.studentId;
@@ -127,8 +177,6 @@ gateRouter.post("/insertRecord",(request, response, next) =>
 						response.send("ERROR");
 					});
 				});
-
-
 			}
 			else if(request.body.in)
 			{
@@ -203,11 +251,12 @@ gateRouter.post("/insertRecord",(request, response, next) =>
 	});	
 });
 
-gateRouter.get("/loadGenerateReport",(request, response)=>
+gateRouter.get("/loadGenerateReport",loggedin,(request, response)=>
 {
-	response.render("studentViews/GenerateReportForm",
+	response.render("GenerateReportForm",
 	{
 		title: "Generate Report from gate reocrds",
+		route: "gate",
 		messages: null
 	});
 });
@@ -215,8 +264,113 @@ gateRouter.get("/loadGenerateReport",(request, response)=>
 gateRouter.post("/generateReport",(request, response)=>
 {
 	console.log("you are in gate router");
-	request.url = "/admin/gateReport";
-	request.app.handle(request,response);
+	let option = request.body.reportOption;
+	console.log(option);
+
+	let today = new Date();
+    let yyyy = today.getFullYear();
+
+    today = new Date();
+    let fdate  = new Date("2000-01-01");
+	let startDate = date.format(fdate, 'DD-MM-YYYY');
+	let endDate = date.format(today, 'DD-MM-YYYY');
+	console.log(today);
+	let startId = "200100000";
+	let endId = "999999999";
+
+	if(option == 2 || option == 3)
+	{
+		startId = request.body.studentId;
+		endId = request.body.studentId;
+	}
+
+	if(option != 2)
+	{
+		let sdate  = new Date(request.body.startDate);
+		let edate  = new Date(request.body.endDate);
+
+		startDate = date.format(sdate, 'DD-MM-YYYY');
+		endDate = date.format(edate, 'DD-MM-YYYY');
+
+		if(startDate > endDate)
+		{
+			let tempDate = startDate;
+			startDate = endDate;
+			endDate = tempDate;
+		}
+	}
+
+	console.log(startDate + " "+ endDate);
+	console.log(startId + " "+ endId);
+	startId = parseInt(startId, 10);
+	endId = parseInt(endId, 10);
+	GateRecords.aggregate(([
+	{
+		"$lookup":
+		{
+			"from": "users",
+			"localField": "userId",
+			"foreignField": "_id",
+			"as": "gaterecords"
+		}
+	},
+	{
+		"$unwind": "$gaterecords"
+	},
+	{
+		"$project":
+		{
+			"gaterecords.password": 0
+		}
+	},
+	{
+		"$match":
+		{
+			"$and":
+			[
+				{"$or":[{"outDate": {"$lte": endDate}},
+						//{"outDate": {"$lte": endDate}},
+						{"outDate":{"$eq": ""}}]},
+				{"$or":[{"inDate": {"$gte": startDate}},
+						//{"inDate": {"$gte": startDate}},
+						{"inDate":{"$eq": ""}}]},
+				{"userId": {"$gte": startId}},
+				{"userId": {"$lte": endId}}
+			]
+		}
+	}
+	]), (err, result)=>
+	{
+		if(err)
+		{
+			console.log("error while getting records for Report");
+			console.log(err);
+		}
+
+		console.log(startDate, endDate);
+		if(result.length !== 0)
+		{
+			response.render("reportViews/DisplayReport",
+			{
+				title: "Generated Report From Gate Reocrds",
+				messages: result,
+				startDate: startDate,
+				endDate: endDate
+			});
+		}
+		else
+		{
+			response.render("reportViews/DisplayReport",
+			{
+				title: "Generated Report From Gate Reocrds",
+				messages: "No Data Found",
+				startDate: startDate,
+				endDate: endDate
+			});
+		}
+	});
+	//request.url = "/admin/gateReport";
+	//request.app.handle(request,response);
 	
 });
 

@@ -74,7 +74,7 @@
   
 
         <h2 style="margin: 20px 10px"> Add a course </h2>
-        <form action="/admin/addCourse" id='courseForm'>
+        <form id='courseForm' action='/admin/addCourse'>
         <div class="form-group row" style="margin-left: 10px">
           <label for="courseID" class="col-sm-2 col-form-label">CourseID:</label>
           <input type="number" class="form-control col-sm-4" id="courseID" name="courseID">
@@ -119,11 +119,13 @@
 <script src="/js/Dashboard_JS/jquery.dataTables.min.js"></script> 
 <script src="/js/Dashboard_JS/matrix.js"></script> 
 <script src="/js/Dashboard_JS/matrix.tables.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
         $(document).ready(function() {
             $('#courseForm').on('submit', function(e){
+                e.preventDefault();
               // validation code here
-              //alert("hey");
+                //alert("hey");
                 let valid=0;
                 let courseID = $('#courseID').val();
                 let course = $('#courseName').val();
@@ -136,8 +138,8 @@
                         e.preventDefault();
                         
                         $.ajax({
-                        type: 'post',
-                        url: '/admin/addCourse',
+                        type: 'POST',
+                        url: '/admin/addCourse/',
                         data: {
                                 courseID: courseID,
                                 courseName: course,
@@ -145,7 +147,7 @@
                         },
                         success: function(data){
                         let confirm = data;
-                        //$('#success').html(confirm);
+                        $('#success').html(confirm);
                         //alert(confirm);
                         },
                         error: function(jqXHR, textStatus, error)

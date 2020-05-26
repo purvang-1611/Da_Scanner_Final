@@ -30,8 +30,8 @@
                     <img src="/pic/course-bg-3.jpg" alt="daiict" class="image" style="width: 100vw; max-width: 500px;">
                 </div>
                 <div class="card-body">
-                  
-                    <form method="POST" action="/<%=route%>/generateReport" >
+                    <h2> <%=route%></h2>
+                    <form method="POST" action="/<%=route%>/generateReport">
                             <div class="row row-space">
                                     <div class="col-2">
                                         <% if(route=="admin") {%>
@@ -76,7 +76,7 @@
                         <div class="input-group" id="studID">
                                 <input type="text" id="stuID" name="studentId" placeholder="Student ID" maxlength="9" minlength="9"></div>
                             </div>  
-                        <center><button type="submit" onclick="DateCheck()" name="reportButton" id="reportButton"> <a href="#" style="color:white;text-decoration: none;">Report Generate</a></button></center>
+                        <center><button type="submit" onclick="DateCheck()" name="reportButton" id="reportButton"> <i style="color:white;text-decoration: none;">Report Generate</i></button></center>
                         <center><button type="button" name="backButton" id="backButton"> <a href="/users/loadHomePage" style="color:white;text-decoration: none;">Back</a></button></center>
                     </form>
                 </div>

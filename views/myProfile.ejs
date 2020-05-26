@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Scan QR From gate
+	</title>
+	<style type="text/css">
+		p
+		{
+			color: red
+        }
+        
+
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+</head>
+<body>
+    <% if(id==1) { %>
+        <%- include('adminViews/adminHeader') %> 
+        <% } %>
+        <% if(id==2) { %>
+            <%- include('GateViews/gateHeader') %> 
+            <% } %>
+        <% if(id==3) { %>
+        <%- include('equipment_views/sac_header') %> 
+        <% } %>
+
+        <% if(id==4) { %>
+            <%- include('library_views/lib_header') %> 
+     <% } %>
+     <% if(id==5) { %>
+        <%- include('student_views/header') %> 
+        <% } %>
+	<%
+	var fname,lname,email,stuID,empType;
+	if(data){
+		fname=data.fName;
+		lname=data.lName;
+		email=data.userEmailId;
+		stuID=data._id;
+    }
+    if(data.userTypeId==1)
+        empType='Admin';
+    if(data.userTypeId==2)
+        empType='GateKeeper'; 
+    if(data.userTypeId==3)
+        empType='SAC Manager'; 
+    if(data.userTypeId==4)
+        empType='Library Admin';  
+	
+	var hey = "asdasd";
+
+%>
+<% if(id!=1) {%> 
+<div class="page-content-body" id="content-body" style="padding-left: 50px;">
+<%}if(id==1) {%>
+<div class="page-content-body" id="content-body"> <%}%>
+		   	<br/><br/>
+				<center><h2 class="title">My Profile</h2></center>
+				<br/>
+				<form method="POST" action="/admin/addEmpUser" onSubmit = "return validate(this)">
+					<div class="form-group row " style="margin-left: 10px;">
+						<label for="First Name" class="col-sm-2 col-form-label">First Name</label>
+						<input class="form-control col-sm-4" type="text" placeholder="FIRST NAME"  name="fName" id="fname"  value="<%=fname%>" disabled>
+					</div>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+							<label for="Last Name" class="col-sm-2 col-form-label">Last Name</label> 
+							<input class="form control col-sm-4" type="text" placeholder="LAST NAME" name="lName" id="lname" value="<%=lname%>" disabled>
+					</div>
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+							<label for="Email ID" class="col-sm-2 col-form-label">Email ID</label> 
+							<input class="form-control col-sm-4" type="text" placeholder="Email" name="userEmailId" id="emailId"  value="<%=email%>" disabled>
+					</div>
+					<span id="error-Email" style="color:red;"></span>   
+					<br/>
+					<div class="form-group row" style="margin-left: 10px;">
+						<label for="Employee ID" class="col-sm-2 col-form-label">ID Number</label> 
+							 <input class="form-control col-sm-4" type="text" placeholder="Employee ID Number" maxlength="9"  name="userId" id="stuID"  value="<%=stuID%>" disabled>
+					</div>
+					<span id="error-ID" style="color:red;"></span>
+                    <br/>
+                    <%if(data.userTypeId!=5) {
+                        %>
+                    <div class="form-group row" style="margin-left: 10px;">
+                            <label for="Employee Type" class="col-sm-2 col-form-label">Employee Type</label> 
+                                 <input class="form-control col-sm-4" type="text" placeholder=""   maxlength="9"  name="userId" id="stuID"  value="<%=empType%>" disabled>
+                    </div>
+                    <%}%>
+                    <br/>
+                    <%if(data.userTypeId==5){%>
+                    <div class="form-group row" style="margin-left: 10px;">
+                            <label for="Batch" class="col-sm-2 col-form-label">Batch</label> 
+                                 <input class="form-control col-sm-4" type="text" placeholder=""   maxlength="9"  name="batch" id="batch"  value="<%=data.batchYear%>" disabled>
+                    </div>
+                    <div class="form-group row" style="margin-left: 10px;">
+                        <label for="Course" class="col-sm-2 col-form-label">Course</label> 
+                             <input class="form-control col-sm-4" type="text" placeholder=""   maxlength="9"  name="course" id="course"  value="<%=data.courseName%>" disabled>
+                    </div>
+                    <div class="form-group row" style="margin-left: 10px;">
+                        <label for="Course" class="col-sm-2 col-form-label">QR Regenerates Remaining</label> 
+                             <input class="form-control col-sm-4" type="text" placeholder=""   maxlength="9"  name="qrcnt" id="qrcnt"  value="<%=data.qr_cnt%>" disabled>
+                    </div>
+
+
+                    <%}%>
+					<!--Dont let Admin register password-->
+
+					<!--<div class="form-group row" style="margin-left: 10px;">
+						<label for="Password" class="col-sm-2 col-form-label">Password</label>
+							<input class="form-control col-sm-4" type="password" placeholder="Password"  name="password" id="Pass1" required>
+				   </div>
+				   <br/>
+				   <div class="form-group row" style="margin-left: 10px;">
+					<label for="Password" class="col-sm-2 col-form-label">Confirm Password</label>
+						<input class="form-control col-sm-4" type="password" placeholder="Re-Type Password" onfocusout="validate()" name="confirm_password" id="Pass2" required>
+					</div>
+					<span id="error-Password" style="color:red;"></span>   -->
+					<br/>
+					<br/>
+					
+					<!--<button type="submit" class="btn btn-primary" style="margin-left: 20px" id="sub">Add Employee</button>-->
+				</form>
+	
+	</div>
+	<script src="/js/Registration_JS/reg.js"></script>
+    <!-- Jquery JS-->
+    
+    <script src="/js/Registration_JS/jquery.min.js"></script>
+    <!-- Vendor JS-->
+    <script src="/js/Registration_JS/select2.min.js"></script>
+    <script src="/js/Registration_JS/moment.min.js"></script>
+    <script src="/js/Registration_JS/daterangepicker.js"></script>
+   
+    <script src="/js/Registration_JS/global.js"></script>
+</body>
+</html>

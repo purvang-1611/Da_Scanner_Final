@@ -11,7 +11,7 @@
   <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
   <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/normalize.css@8.0.0/normalize.css">
   <link rel="preload" as="style" onload="this.rel='stylesheet';this.onload=null" href="https://unpkg.com/milligram@1.3.0/dist/milligram.min.css">
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
   <style type="text/css">
     #buttonDiv
     {
@@ -50,6 +50,13 @@
     #result
     {
       padding:10px;
+      font-size: 15px;
+    }
+    button, input, optgroup, select, textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: inherit;
     }
   </style>
   <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script> 
@@ -68,19 +75,16 @@
 </head>
 
 <body>
-
+  <%-include('gateHeader')%>
   <main class="wrapper" style="padding-top:2em">
 
     <section class="container" id="demo-content">
-      <h1 class="title">Scan QR Code from Video Camera</h1>
+      <h2 class="title">Scan QR Code from Video Camera</h2>
 
-      <p>
-        <a class="button-small button-outline" href="/">HOME 🏡</a>
-      </p>
 
       <div id="buttonDiv">
-        <a><button class="button" id="startButton"> Start </button> </a>
-        <a> <button class="button"  id="resetButton"> Reset </button></a>
+        <a><button class="button dablue" id="startButton"> Start </button> </a>
+        <a> <button class="button dablue"  id="resetButton"> Reset </button></a>
       </div>
 
       <div>
@@ -88,15 +92,18 @@
       </div>
 
       <label>OR Enter Manually:</label>
-      <pre><input type="text" name="studentId" id="studentId"></pre>
+      StudentId:
+      <pre><input type="text" name="studentId" id="studentId" class="dablue"></pre>
+      Visitors
+      <pre><input type="number" name="noOfVisitors" id="noOfVisitors" class="dablue"></pre>
 
       <label>Student Details:</label>
       <div id="result">
       </div>
       <br>
-      <button id="verify">Verify</button>
-      <button id="btnIn" disabled>Entry</button>
-      <button id="btnOut" disabled>Exit</button>
+      <button id="verify" class="dablue">Verify</button>
+      <button id="btnIn" class="dablue" disabled>Entry</button>
+      <button id="btnOut" class="dablue" disabled>Exit</button>
 
       <div id="sourceSelectPanel" style="display:none">
         <label for="sourceSelect">Change video source:</label>
@@ -114,11 +121,9 @@
 
     </section>
 
-    <footer class="footer">
-      <section class="container">
-        <a target="_blank" href="/">Home</a>
-      </section>
-    </footer>
+    
+    <%- include('../footer'); -%>
+
   </main>
 
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
@@ -146,11 +151,12 @@
         else
         {
           $('#result').html(
-            "Id:&emsp;" + data._id + "<br>" +
+            "ID:&emsp;" + data._id + "<br>" +
             "FullName:&emsp;" + data.fName + " " + data.lName + "<br>" + 
             "Course:&emsp;" + data.courseName + "<br>" +
             "batch:&emsp;" + data.batchYear
           );
+          document.getElementById("studentId").value = data._id;
           $('#btnIn').prop('disabled', false);
           $('#btnOut').prop('disabled', false);
         }
@@ -165,11 +171,14 @@
     $("#btnIn").click(()=>
     {
       var id = document.getElementById("studentId").value;
+      var noOfVisitors = document.getElementById("noOfVisitors").value;
+      
       console.log(id);
       
       $.post('/gate/insertRecord',
       {
         studentId: id,
+        noOfVisitors: noOfVisitors,
         in: true
       },
       (data, status)=>
@@ -183,6 +192,7 @@
           $('#result').html("<span style='color: red;'> <b>\
             RECORD INSERTED<b></span>");
           document.getElementById("studentId").value = "";
+          document.getElementById("noOfVisitors").value = "";
           $('#btnIn').prop('disabled', true);
           $('#btnOut').prop('disabled', true);
         }
@@ -209,6 +219,7 @@
           $('#result').html("<span style='color: red;'> <b>\
             RECORD INSERTED<b></span>");
           document.getElementById("studentId").value = "";
+          document.getElementById("noOfVisitors").value = "";
           $('#btnIn').prop('disabled', true);
           $('#btnOut').prop('disabled', true);
         }
