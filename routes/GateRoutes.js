@@ -257,7 +257,8 @@ gateRouter.get("/loadGenerateReport",loggedin,(request, response)=>
 	{
 		title: "Generate Report from gate reocrds",
 		route: "gate",
-		messages: null
+		messages: null,
+		id: request.user.userTypeId
 	});
 });
 

@@ -109,25 +109,7 @@ userRouter.get("/",loggedin,(req,res)=>{
 
 
 // LOADING GENERATE REPORT FORM
-userRouter.get("/loadGenerateReport",loggedin,(request, response)=>
-{
-	let user = request.user;
-	let route="";
-	if(user.userTypeId==1){
-		route="admin";
-	}
-	else if(user.userTypeId==2)
-	{
-		route="gate";
-	}
-	// TODO SAC AND LIB
-	response.render("GenerateReportForm",
-	{
-		title: "Generate Report from gate reocrds",
-		route: route,
-		messages: null
-	});
-});
+
 
 userRouter.post("/generateReport",(request,response)=>{
    

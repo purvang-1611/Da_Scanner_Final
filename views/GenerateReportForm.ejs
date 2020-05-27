@@ -19,47 +19,62 @@
     <link href="/css/Report_CSS/daterangepicker.css" rel="stylesheet" media="all">
 
     <!-- Main CSS-->
-    <link href="/css/Report_CSS/main.css" rel="stylesheet" media="all">
+    <link href="/css/Report_CSS/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
 </head>
 
 <body>
-    <div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
-        <div class="wrapper wrapper--w680" style="max-width: 500px;">
-            <div class="card card-1">
-                <div>
-                    <img src="/pic/course-bg-3.jpg" alt="daiict" class="image" style="width: 100vw; max-width: 500px;">
-                </div>
+    <% if(id==1) { %>
+        <%- include('adminViews/adminHeader') %> 
+        <% } %>
+        <% if(id==2) { %>
+            <%- include('GateViews/gateHeader') %> 
+        <% } %>
+        <% if(id==3) { %>
+        <%- include('equipment_views/sac_header') %> 
+        <% } %>
+
+        <% if(id==4) { %>
+            <%- include('library_views/lib_header') %> 
+        <% } %>
+        <% if(id==5) { %>
+            <%- include('student_views/header') %> 
+        <% } %>
+    <div class="page-content-body" id="content-body">
+        <div class="wrapper wrapper--w680" style="max-width: 600px;">
+            <div class="card card-1" style="margin-top: 100px">
+                <center><h2 style="margin-top: 20px"> Generate Reports</h2></center>
                 <div class="card-body">
-                    <h2> <%=route%></h2>
+                    
+
                     <form method="POST" action="/<%=route%>/generateReport">
                             <div class="row row-space">
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <% if(route=="admin") {%>
-                                        <div class="input-group">
-                                            <div class="rs-select2 js-select-simple select--no-search">
+                                        <div class="form-group row">
+                                            
                                                 
-                                                <select name="empType" id="designation">
-                                                    <option selected="selected" value="sac">SAC</option>
+                                                <select name="empType" id="designation" class="form-control">
+                                                    <option selected="selected" value="equipment">SAC</option>
                                                     <option value="gate">Gate Keeper</option>
-                                                    <option value="lib">Library</option>
+                                                    <option value="lib_tmp">Library</option>
                                                 </select>
-                                                <div class="select-dropdown"></div>
+                                                <!--<div class="select-dropdown"></div>-->
                                                
-                                            </div>
                                         </div>
                                         <%}%>
                                     </div>
-                                    <div class="col-2">
-                                        <div class="input-group">
-                                            <div class="rs-select2 js-select-simple select--no-search">
-                                                <select id="selectBox" name="reportOption" onchange="changeFunc();">
+                                    <div class="col-4">
+                                        
+                                            <div class="form-group row">
+                                                <select id="selectBox" name="reportOption" class="form-control" onchange="changeFunc();">
                                                     <option value="1">By Date</option>
                                                     <option value="2">By StudentID</option>
                                                     <option value="3">By Both</option>
                                                 </select>
-                                                <div class="select-dropdown"></div>
+                                                <!--<div class="select-dropdown"></div>-->
                                             </div>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                             <div>
@@ -77,12 +92,14 @@
                                 <input type="text" id="stuID" name="studentId" placeholder="Student ID" maxlength="9" minlength="9"></div>
                             </div>  
                         <center><button type="submit" onclick="DateCheck()" name="reportButton" id="reportButton"> <i style="color:white;text-decoration: none;">Report Generate</i></button></center>
+                        <br/>
                         <center><button type="button" name="backButton" id="backButton"> <a href="/users/loadHomePage" style="color:white;text-decoration: none;">Back</a></button></center>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <%-include('footer')%>
     <script src="/js/Report_JS/jquery.min.js"></script>
     <script src="/js/Report_JS/select2.min.js"></script>
     <script src="/js/Report_JS/moment.min.js"></script>

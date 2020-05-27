@@ -183,7 +183,7 @@ app.use("/userTypes", userTypeRoute);
 app.use("/home",homeRoute);
 app.use("/gate",gateRoute);
 app.use("/admin",adminRoute);
-
+app.use('/lib_tmp',lib_tmp);
 
 app.use('/equipment',equipment);
 

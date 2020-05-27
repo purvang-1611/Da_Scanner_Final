@@ -84,9 +84,35 @@ userRouter.get("/loadHomePage",loggedin, (req,res)=>{
 	}
 })
 
+// LOADING GENERATE REPORT FORM
 
-
-
+userRouter.get("/loadGenerateReport",loggedin,(request, response)=>
+{
+	let user = request.user;
+	let route="";
+	if(user.userTypeId==1){
+		route="admin";
+	}
+	else if(user.userTypeId==2)
+	{
+		route="gate";
+	}
+	else if(user.userTypeId==3)
+	{
+		route="equipment";
+	}
+	else if(user.userTypeId==4){
+		route="lib_tmp";
+	}
+	// TODO SAC AND LIB
+	response.render("GenerateReportForm",
+	{
+		title: "Generate Report",
+		route: route,
+		messages: null,
+		id: request.user.userTypeId
+	});
+});
 
 userRouter.get('/reset/:token',(req,res)=>{
 	User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
