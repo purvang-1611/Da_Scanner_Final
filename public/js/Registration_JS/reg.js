@@ -24,7 +24,7 @@ function isNumberKey(evt)
       }
       function IDCheck(){
             var name = document.getElementById('stuID').value;
-            if(name.length<9){
+            if(name.length<9 || name.length > 9){
                 document.getElementById('error-ID').innerHTML="*ID have must be 9 digit";
                 document.getElementById('stuId').focus();
             }

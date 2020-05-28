@@ -26,7 +26,7 @@ var loggedin = function (req,res,next)
         })
        
     }
-    else if(req.cookies['remember_me']){
+    else if(req.cookies['remember_me'] && !req.user){
 		req.user = req.cookies['remember_me'];
 		next();
 	}           

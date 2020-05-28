@@ -89,6 +89,7 @@ var scanqr=require('./routes/scanqr_router');
 var lib_tmp=require('./routes/lib_tmp_router');
 var student_home=require('./routes/student_homepage_router');
 var student_header=require('./routes/header_router');
+let qrcode = require("./routes/qrcode_router");
 
 
 
@@ -195,13 +196,21 @@ app.use('/equipment',equipment);
 app.use('/scanqr',scanqr);
 app.use('/student_homepage1',student_home);
 app.use("/student_header", student_header);
+app.use("/qrcode",qrcode);
 //app.user("/emp",userRoute);
 // init port so server can start listening
 
-
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 app.use(function(err,req,res,text){
-    console.error(err.stack);
-    res.status(500);
+
+    res.status(err.status || 500);
+    if(err.status){
+        res.render("Errors/error404");
+    }else
     res.render("Errors/error500");
 
 })

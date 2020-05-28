@@ -17,6 +17,7 @@
     <header>
       <div class="container">
       <img src="https://www.daiict.ac.in/wp-content/uploads/2019/01/logo-2018.png" class="img1 img-responsive"/>
+      <div class="loader" id="loader"></div>
     </div>
     </header>
 
@@ -26,9 +27,9 @@
 <div class="topnav" id="myTopnav">
     
     <a class="menualign" href="/student_homepage1" class="active">Home</a>
-    <a onclick="onRegenarateQr()">RegenerateQr</a>
+    <a href="javascript:onRegenarateQr()">RegenerateQr</a>
     <a href="/equipment/borrow_history">Equipment borrow history</a>
-    <a href="/users/myProfile">Profile</a>
+    <a href="/users/myProfile"></a>
     <a href="/users/logout">Log out</a>
     <a href="javascript:void(0);" class="icon" onclick="myFunction()">
       <i class="fa fa-bars"></i>
@@ -49,21 +50,37 @@
 
     function onRegenarateQr()
     {
-      
       $.ajax({
                   type: 'get',
                   url: '/student_header',
-              
+                  
                   success: function(data){
-                    
-                    if(data>0)
+                    //alert(data);
+                    if(parseInt(data)>0)
                     {
 
                       if(confirm("Are you sure you want to regenerateQR ? \n"+data+" remaining"))
                       {
                         console.log("yes");
-                        window.location.href="/qrcode";
-                      }
+                        $.ajax({
+                          type: "get",
+                          url: '/qrcode',
+                          beforeSend: function(){
+                          // Show image container
+                          $("#loader").show();
+                          },
+                          success: function(data){
+                            alert(data);
+                          },
+                          error: function(RXHDR,statusText,error){
+                            alert(RXHDR.responseText);
+                          },
+                          complete:function(data){
+                          // Hide image container
+                          $("#loader").hide();
+                         }
+                      })
+                    }
                       else{
                         console.log("no");
 
@@ -75,12 +92,31 @@
                       alert("Please contact Admin office");
                     }
 
+                  },
+                  error: function(res,text,err){
+                    alert(res.responseText);
                   }
                 })
 
     }
     </script>
-    
+    <style>
+      .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  float:right;
+  display:none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
 
 
 </body>

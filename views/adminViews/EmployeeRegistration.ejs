@@ -42,13 +42,13 @@
 					<br/>
 					<div class="form-group row" style="margin-left: 10px;">
 							<label for="Email ID" class="col-sm-2 col-form-label">Email ID</label> 
-							<input class="form-control col-sm-4" type="text" placeholder="Email" name="userEmailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" required>
+							<input class="form-control col-sm-4" type="text" placeholder="Email" name="userEmailId" id="emailId"   value="<%=email%>" required>
 					</div>
 					<span id="error-Email" style="color:red;"></span>   
 					<br/>
 					<div class="form-group row" style="margin-left: 10px;">
 						<label for="Employee ID" class="col-sm-2 col-form-label">Employee ID</label> 
-							 <input class="form-control col-sm-4" type="text" placeholder="Employee ID Number" onkeypress="return isNumberKey(event)"  onfocusout="IDCheck()" maxlength="9"  name="userId" id="stuID"  value="<%=stuID%>" required>
+							 <input class="form-control col-sm-4" type="text" placeholder="Employee ID Number"  maxlength="9"  name="userId" id="stuID"  value="<%=stuID%>" required>
 					</div>
 					<span id="error-ID" style="color:red;"></span>
 					<br/>

@@ -12,8 +12,10 @@ const date = require('date-and-time');
 // is logged in or not 
 var loggedin1 = function (req,res,next)
 {
- 
-    if(req.isAuthenticated())
+    if(req.cookies['remember_me']){
+        req.user = req.cookies['remember_me'];
+    }
+    if(req.isAuthenticated() || req.user)
     {
         user.find({_id : req.user._id},function(err,rows){
             if(err)
@@ -32,22 +34,19 @@ var loggedin1 = function (req,res,next)
         })
        
     }
-    else if(req.cookies['remember_me']){
-		req.user = req.cookies['remember_me'];
-		next();
-	}      
 	else
 		res.redirect('/index');
 }
 
-//This function checks 
-//whether authenticated sac user
-// is logged in or not 
+
 
 var loggedin = function (req,res,next)
 {
     // console.log(req.user);
-    if(req.isAuthenticated())
+    if(req.cookies['remember_me']){
+        req.user = req.cookies['remember_me'];
+    }
+    if(req.isAuthenticated() || req.user)
     {
         user.find({$and : [{_id : req.user._id},{enabled:true}]},function(err,rows){
             if(err)
@@ -74,14 +73,10 @@ var loggedin = function (req,res,next)
         
        
     }
-    //TODO IF COOKIE THEN ALSO CHECK IF VALID INVALID USER
-    else if(req.cookies['remember_me']){
-		req.user = req.cookies['remember_me'];
-		next();
-	}             
 	else
 		res.redirect('/');
 }
+
 router.get("/",loggedin,(req,res)=>{
 
     
