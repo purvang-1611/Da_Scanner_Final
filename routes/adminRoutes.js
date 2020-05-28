@@ -99,7 +99,7 @@ userRouter.get("/",loggedin,(req,res)=>{
 			inventoryData: inventoryRecords,
 			err: ""
 		})
-    },1000)
+    },500)
 	
 
 })
@@ -174,6 +174,7 @@ userRouter.post("/addEmpUser", async (request, response, next) =>
 					user.fName = request.body.fName;
 					user.lName = request.body.lName;
 					user.userTypeId = request.body.userTypeId;
+					user.enabled = true;
 					//not in emp registration
 						//user.courseName = request.body.courseName;
 						//user.batchYear = request.body.batchYear;
@@ -273,6 +274,40 @@ userRouter.get("/loadAllEmpUsers", (request, response, next) =>
 		}
 	});
 });
+
+// ENABLE/DISABLE USERS
+
+userRouter.post('/enableUser',loggedin,(req,res)=>{
+
+	User.findOne({_id:req.body.id},(err,user)=>{
+		user.enabled=true;
+		user.save(function(err){
+			if(err)
+			{
+				res.status(500).send("Cannot Update User, Database Error");
+			}
+			else{
+				res.send("User Status Updated");
+			}
+		})
+	})
+})
+userRouter.post('/disableUser',loggedin,(req,res)=>{
+
+	User.findOne({_id:req.body.id},(err,user)=>{
+		user.enabled=false;
+		user.save(function(err){
+			if(err)
+			{
+				res.status(500).send("Cannot Update User, Database Error");
+			}
+			else{
+				res.send("User Status Updated");
+			}
+		})
+	})
+})
+
 
 userRouter.delete("/delEmp/:userId", (request, response, next)=>
 {

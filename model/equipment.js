@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 let equipmentBorrows = new Schema({
 
     equipment_id : {type:mongoose.Schema.ObjectId,ref:"inventorytb"},
-    student_id : {type:String},
+    student_id : {type:Number},
     issue_date : {type:String},
     quantity:{type:Number}
 

@@ -113,18 +113,20 @@ app.get("/",(request, response) =>
 
     let cookie = request.cookies['remember_me'];
     console.log(cookie);
-    if(cookie || request.isAuthenticated())
+    let msg= request.flash('message')
+    //console.log(msg + "heyyyyy");
+    if((cookie || request.isAuthenticated()) && msg=="")
     {
         //console.log("hey");
         response.redirect('/users/loadHomePage');
 
     }else{
     //response.redirect("/admin/loadAddUser");
-
+    console.log(msg + "heyyyyy");
 	response.render("loginPage",
 	{
         title: "Helloo, Welcome to DA-Scanner.",
-        error: request.flash('message')
+        error: msg
     });
 }
 });
@@ -134,17 +136,20 @@ app.get("/index",(request, response) =>
 
     let cookie = request.cookies['remember_me'];
     console.log(cookie);
-    if(cookie || request.isAuthenticated())
+    let msg= request.flash('message')
+   // console.log(msg + "heyyyyy");
+    if((cookie || request.isAuthenticated()) && msg=="")
     {
         //console.log("hey");
         response.redirect('/users/loadHomePage');
 
     }else{
     //response.redirect("/admin/loadAddUser");
+    console.log(msg + "heyyyyy");
 	response.render("loginPage",
 	{
         title: "Helloo, Welcome to DAScanner.",
-        error: request.flash('message')
+        error: msg
     });
 }
 });

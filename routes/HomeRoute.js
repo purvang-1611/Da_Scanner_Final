@@ -10,7 +10,7 @@ module.exports = function (passport){
     homeRouter.post("/authUser",passport.authenticate('local',{
         failureRedirect:'/',
         //successRedirect:'/users/loadHomePage',
-        failureFlash: 'Invalid Username or Password'
+        failureFlash: ""
     }),(req,res)=>{
 
         //console.log("cook" + req.cookies['remember_me']);

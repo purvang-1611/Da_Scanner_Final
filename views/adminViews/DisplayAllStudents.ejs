@@ -33,6 +33,7 @@
                             <th >Course</th>
                             <th>Batch</th>
 							<th >Disable/Enable</th>
+							<th>Reset Student's QR </th>
 					</tr>
 			  </thead>
 			  <tbody>
@@ -43,10 +44,13 @@
                             <td style="color:black"><%=user.userEmailId %></td>
                             <td><%=user.courseName%></td>
                             <td><%=user.batchYear%></td>
-                            
-							<td style="color:black"><i class="fas fa-user-times"></i> &nbsp; 
-							
-							<i class="fas fa-user" onclick="resetStudent('<%=user._id%>')"></i></td>
+							<td style="color:black">
+								<%if(user.enabled){%>
+								&nbsp;<a href="javascript:disableStu(<%=user._id%>)" data-toggle="tooltip" title="Disable!"><i class="fas fa-user-times"></i></a> <%} else{%>
+								 &nbsp; &nbsp; &nbsp; &nbsp; <a href="javascript:enableStu(<%=user._id%>)" data-toggle="tooltip" title="Enable!"><i class="fas fa-user"></i></a><%}%>
+							</td>
+
+							<td><a href="javascript:resetStudent(<%=user._id%>)"><i class="fa fa-refresh" aria-hidden="true"></i></a></td>
 						  </tr>   
 						  <%} %>  
 			  </tbody>
@@ -110,24 +114,57 @@ function resetStudent(id)
 
 }
 </script>
+<script>
+	function enableStu(id)
+	{
+		$.ajax({
+                        type: 'POST',
+                        url: '/admin/enableUser/',
+                        data: {
+                                id: id
+                        },
+                        success: function(data){
+                        let confirm = data;
+                        //$('#success').html(confirm);
+						alert(confirm);
+						location.reload();
+                        },
+                        error: function(jqXHR, textStatus, error)
+                        {
+                             
+
+                               let err = jqXHR.responseText;
+							 	alert(err); 
+                               
+                        }
+                
+                        });
+	}
+	function disableStu(id)
+	{
+		$.ajax({
+                        type: 'POST',
+                        url: '/admin/disableUser/',
+                        data: {
+                                id: id
+                        },
+                        success: function(data){
+                        let confirm = data;
+                        //$('#success').html(confirm);
+						alert(confirm);
+						location.reload();
+                        },
+                        error: function(jqXHR, textStatus, error)
+                        {
+
+                               let err = jqXHR.responseText;
+							 	alert(err); 
+                               
+                        }
+                
+                        });
+	}
+</script>
 </body>
 </html>
 
-
-
-
-
-<!--
-	<h1> <%= title %> </h1>
-	<% for(user of users) { %>
-		<h2><%= user._id %></h2>
-		<p><%= user.userTypeId %>
-		<p><%= user.userEmailId %>
-		<p><%= user.fName %>
-		<p><%= user.lName %>
-		<p><%= user.courseName %>
-		<p><%= user.batchYear %>
-		<p><%= user.password %>
-		<br>
-	<% } %>
--->

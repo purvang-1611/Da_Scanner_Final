@@ -20,51 +20,10 @@ function CheckQR(id,status)
          status:status,
          mes: "call from ajax",
          },
-    success:function(data){
+      success:function(data){
     
-      let s1=Number(data[0]._id);
-             let batch_year=Math.trunc(s1/100000);
-               let batch_id=Math.trunc(s1/1000)%100;
-               let stu_id=Math.trunc(s1%1000);
-               alert(batch_year);
-               alert(batch_id);
-               alert(stu_id);
+                 window.location.href="/lib_tmp/"+data._id;  
               
-              var x=Date.now();
-              var dat_obj=new Date(x);
-              var year=dat_obj.getFullYear();
-              alert("final"+year);
-              
-             if(batch_id==01)
-             {
-               if(batch_year<=year && batch_year>=year-4)
-               {
-             
-                 window.location.href="/lib_tmp/"+data[0]._id;  
-               }
-               else{
-                 //document.write("invalid");
-                 document.getElementById('sid2').innerHTML="*ID is Invalid";
-               }
-             }
-             else if(batch_id==11 || batch_id==12)
-             {
-              
-                if(batch_year<=year && batch_year>=year-2)
-                {
-                
-                  window.location.href="/lib_tmp/"+data[0]._id;
-                }
-                else
-                {
-                  document.getElementById('sid2').innerHTML="*ID is Invalid";
-                }
-             }
-             else
-             {
-                document.getElementById('sid2').innerHTML="*ID is Invalid";
-             } 
-
              },
              error:function(RXHDR,statusText,error)
             { 
@@ -363,7 +322,7 @@ td select{
     <tbody>
       <% for(student of students) {%>
         <tr>
-        <td><%= student.user_id %></td>
+        <td><%= student.userId %></td>
         <td><%= student.in_time %></td>
         <td><%= student.date %></td>
         

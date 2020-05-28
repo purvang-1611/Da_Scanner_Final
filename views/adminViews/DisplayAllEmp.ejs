@@ -30,7 +30,6 @@
 							<th >Employee ID</th>
 							<th >Name</th>
 							<th >Email</th>
-						
 							<th >Disable/Enable</th>
 					</tr>
 			  </thead>
@@ -40,7 +39,11 @@
 							<td style="color:black"><%=user._id %></td>
 							<td style="color:black"><%=user.fName%> <%=user.lName %></td>
 							<td style="color:black"><%=user.userEmailId %></td>
-							<td style="color:black"><i class="fas fa-user-times"></i> &nbsp; <i class="fas fa-user"></i></td>
+							<td style="color:black">
+								<%if(user.enabled){%>
+								&nbsp;<a href="javascript:disableEmp(<%=user._id%>)" data-toggle="tooltip" title="Disable User!"><i class="fas fa-user-times"></i></a> <%} else{%>
+								 &nbsp; &nbsp; &nbsp; &nbsp; <a href="javascript:enableEmp(<%=user._id%>)" data-toggle="tooltip" title="Enable User!"><i class="fas fa-user"></i></a><%}%>
+							</td>
 						  </tr>   
 						  <%} %>  
 			  </tbody>
@@ -73,6 +76,66 @@
 $(document).ready( function () {
     $('#EmpTable').DataTable();
 } );
+</script>
+<script>
+	function enableEmp(id)
+	{
+		$.ajax({
+                        type: 'POST',
+                        url: '/admin/enableUser/',
+                        data: {
+                                id: id
+                        },
+                        success: function(data){
+                        let confirm = data;
+                        //$('#success').html(confirm);
+						alert(confirm);
+						location.reload();
+                        },
+                        error: function(jqXHR, textStatus, error)
+                        {
+                               //alert("asdasd" + error);
+                               //console.log("heyuuuuu" + jqXHR.responseText);
+
+                               let err = jqXHR.responseText;
+							 	alert(err); 
+							   //$("#error").html(err);
+                                //console.log(jqXHR);
+                               //console.log(textStatus);
+                               
+                        }
+                
+                        });
+	}
+	function disableEmp(id)
+	{
+		$.ajax({
+                        type: 'POST',
+                        url: '/admin/disableUser/',
+                        data: {
+                                id: id
+                        },
+                        success: function(data){
+                        let confirm = data;
+                        //$('#success').html(confirm);
+						alert(confirm);
+						location.reload();
+                        },
+                        error: function(jqXHR, textStatus, error)
+                        {
+                               //alert("asdasd" + error);
+                               //console.log("heyuuuuu" + jqXHR.responseText);
+
+                               let err = jqXHR.responseText;
+							 	alert(err); 
+							   //$("#error").html(err);
+                                //console.log(jqXHR);
+                               //console.log(textStatus);
+                               
+                        }
+                
+                        });
+	}
 </script>
 </body>
 </html>

@@ -7,17 +7,25 @@ router.post('/',function(req,res,next){
     console.log("inside router");
     if(req.body.status==1)
     {
-          user_records.find({qr_code:req.body.id},function(err,rows){
+          user_records.findOne({qr_code:req.body.id},function(err,rows){
             if(err)
             {
                console.log(err);
                 res.status(500).send("Qr invalid") 
             }
             else{
-                console.log(rows);
-                if(rows.length==1)
+                //console.log(rows);
+                if(rows)
                 {
-                    res.send(rows);
+                    let today = new Date();
+                    let year = today.getFullYear();
+                    if(year <= parseInt(rows.batchYear) && rows.enabled==true){
+                        res.send(rows);
+                    }
+                    else{
+                        res.status(500).send("Student is an Alumni or Disabled"); 
+                    }
+                   
                 }
                 else{
                     res.status(500).send("Qr invalid") 
@@ -27,19 +35,29 @@ router.post('/',function(req,res,next){
     }
     else
     {
-        user_records.find({_id:req.body.id},function(err,rows){
+        user_records.findOne({_id:req.body.id},function(err,rows){
             if(err)
             {
                 
-                res.status(500).send("Qr invalid") 
+                res.status(500).send("ID invalid") 
             }
             else{
-                if(rows.length==1)
+               // console.log(rows.length);
+                if(rows)
                 {
-                    res.send(rows);
+                    let today = new Date();
+                    let year = today.getFullYear();
+                    console.log(rows);
+                    console.log(year + " " + rows.batchYear + " " + rows.enabled);
+                    if(year <= parseInt(rows.batchYear) && rows.enabled == true){
+                        res.send(rows);
+                    }
+                    else{
+                        res.status(500).send("Student is an Alumni or Disabled"); 
+                    }
                 }
                 else{
-                    res.status(500).send("Qr invalid") 
+                    res.status(500).send("ID invalid") 
                 }
             }
         })

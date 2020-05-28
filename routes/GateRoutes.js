@@ -305,6 +305,9 @@ gateRouter.post("/generateReport",(request, response)=>
 	console.log(startId + " "+ endId);
 	startId = parseInt(startId, 10);
 	endId = parseInt(endId, 10);
+	// FOR DATA FROM BOTH TABLES
+	let gateRec = {};
+	let tempRec = {};
 	GateRecords.aggregate(([
 	{
 		"$lookup":
@@ -351,25 +354,105 @@ gateRouter.post("/generateReport",(request, response)=>
 		console.log(startDate, endDate);
 		if(result.length !== 0)
 		{
-			response.render("reportViews/DisplayReport",
+			/*response.render("reportViews/DisplayReport",
 			{
 				title: "Generated Report From Gate Reocrds",
 				messages: result,
 				startDate: startDate,
 				endDate: endDate
-			});
+			});*/
+			gateRec = result;
 		}
 		else
 		{
-			response.render("reportViews/DisplayReport",
+			/*response.render("reportViews/DisplayReport",
 			{
 				title: "Generated Report From Gate Reocrds",
 				messages: "No Data Found",
 				startDate: startDate,
 				endDate: endDate
-			});
+			});*/
+			gateRec=undefined;
 		}
 	});
+
+	// FROM CURRENT PENDING ENTRY TABLE 
+	TempGateRecords.aggregate(([
+		{
+			"$lookup":
+			{
+				"from": "users",
+				"localField": "userId",
+				"foreignField": "_id",
+				"as": "gaterecords"
+			}
+		},
+		{
+			"$unwind": "$gaterecords"
+		},
+		{
+			"$project":
+			{
+				"gaterecords.password": 0
+			}
+		},
+		{
+			"$match":
+			{
+				"$and":
+				[
+					{"$or":[{"outDate": {"$lte": endDate}},
+							//{"outDate": {"$lte": endDate}},
+							{"outDate":{"$eq": ""}}]},
+					{"$or":[{"inDate": {"$lte": endDate}},
+							//{"inDate": {"$gte": startDate}},
+							{"inDate":{"$eq": ""}}]},
+					{"userId": {"$gte": startId}},
+					{"userId": {"$lte": endId}}
+				]
+			}
+		}
+		]), (err, result)=>
+		{
+			if(err)
+			{
+				console.log("error while getting records for Report");
+				console.log(err);
+			}
+	
+			console.log(startDate, endDate);
+			if(result.length !== 0)
+			{
+				console.log(gateRec);
+				console.log("hEYYYYYoooo");
+				console.log(result);
+				response.render("reportViews/DisplayReport",
+				{
+					title: "Generated Report From Gate Reocrds",
+					tempRec: result,
+					gateRec: gateRec,
+					startDate: startDate,
+					endDate: endDate
+				});
+				
+			}
+			else
+			{
+				console.log(gateRec);
+				console.log("hEYYYYY");
+				console.log(tempRec);
+				response.render("reportViews/DisplayReport",
+				{
+					title: "Generated Report From Gate Reocrds",
+					tempRec: undefined,
+					gateRec: gateRec,
+					startDate: startDate,
+					endDate: endDate
+				});
+				//tempRec=undefined;
+			}
+		});
+
 	//request.url = "/admin/gateReport";
 	//request.app.handle(request,response);
 	

@@ -49,17 +49,24 @@ var loggedin = function (req,res,next)
     // console.log(req.user);
     if(req.isAuthenticated())
     {
-        user.find({_id : req.user._id},function(err,rows){
+        user.find({$and : [{_id : req.user._id},{enabled:true}]},function(err,rows){
             if(err)
             {
                 res.redirect('/');
             }
             else{
-                if(rows[0].userTypeId==3)
+                if(rows.length==0){
+                    console.log("asdasd");
+                    req.flash('message','Invalid User (You are disabled or not logged IN)');
+                    res.redirect('/');
+                }
+                else if(rows[0].userTypeId==3)
                 {
                     next() // if logged in
                 }
                 else{
+                    console.log("asdasd");
+                    req.flash('message','Invalid User (You are disabled or not logged IN');
                     res.redirect('/');
                 }
             }
@@ -67,6 +74,7 @@ var loggedin = function (req,res,next)
         
        
     }
+    //TODO IF COOKIE THEN ALSO CHECK IF VALID INVALID USER
     else if(req.cookies['remember_me']){
 		req.user = req.cookies['remember_me'];
 		next();
@@ -417,7 +425,9 @@ router.post("/generateReport",(request, response)=>
 	console.log(startDate + " "+ endDate);
 	console.log(startId + " "+ endId);
 	startId = parseInt(startId, 10);
-	endId = parseInt(endId, 10);
+    endId = parseInt(endId, 10);
+    let sac_records = {};
+    let currentlyBorrowed = {};
 	sacrecords.aggregate(([
 	{
         //JOINING USER TABLE FOR USER DATA
@@ -478,26 +488,124 @@ router.post("/generateReport",(request, response)=>
 		console.log(startDate, endDate);
 		if(result.length !== 0)
 		{
-            console.log(result);
+            /*console.log(result);
 			response.render("reportViews/DisplaySACReport",
 			{
 				title: "Generated Report From SAC Reocrds",
 				messages: result,
 				startDate: startDate,
 				endDate: endDate
-			});
+            });*/
+            sac_records=result;
+            console.log("HEYYYYYY");
+            console.log(sac_records);
 		}
 		else
 		{
-			response.render("reportViews/DisplayReport",
+			/*response.render("reportViews/DisplayReport",
 			{
 				title: "Generated Report From SAC Reocrds",
 				messages: "No Data Found",
 				startDate: startDate,
 				endDate: endDate
-			});
+            });*/
+            sac_records=null;
+            console.log("not OGT")
 		}
-	});
+    });
+
+    // QUERYING CURRENTLY BORROWED RECORDS
+    console.log("HEYYYYYY11111");
+    console.log(sac_records);
+    equipment.aggregate(([
+        {
+            //JOINING USER TABLE FOR USER DATA
+            "$lookup":
+            {
+                "from": "users",
+                "localField": "student_id",
+                "foreignField": "_id",
+                "as": "user_records"
+            }
+        },
+        {
+            "$unwind": "$user_records"
+        },
+        {
+         //JOINING INVENTORY TABLE   
+            "$lookup":
+            {
+                "from": "inventory_records",
+                "localField": "equipment_id",
+                "foreignField": "_id",
+                "as": "inventory_records"
+            }
+        },
+        {
+            "$unwind": "$inventory_records"
+        },
+        {
+            "$project":
+            {
+                "user_records.password": 0
+            }
+        },
+        {
+            "$match":
+            {
+                "$and":
+                [
+                    {"$or":[{"issue_date": {"$gte": startDate}},
+                            //{"inDate": {"$gte": startDate}},
+                            {"issue_date":{"$lte": endDate}}]},
+                    {"student_id": {"$gte": startId}},
+                    {"student_id": {"$lte": endId}}
+                ]
+            }
+        }
+        ]), (err, result)=>
+        {
+            if(err)
+            {
+                console.log("error while getting records for Report");
+                console.log(err);
+            }
+    
+           // console.log(startDate, endDate);
+            if(result.length !== 0)
+            {
+                // WILL RENDER BEFORE ALL DATA IS GOT SO SET TIMEOUT
+                setTimeout(()=>{
+                    response.render("reportViews/DisplaySACReport",
+                    {
+                        title: "Generated Report From SAC Reocrds",
+                        sac_records: sac_records,
+                        temp_records: result,
+                        startDate: startDate,
+                        endDate: endDate
+                    });
+
+                },1000);
+               
+                
+            }
+            else
+            {
+                setTimeout(()=>{
+                    response.render("reportViews/DisplaySACReport",
+                    {
+                        title: "Generated Report From SAC Reocrds",
+                        sac_records: sac_records,
+                        temp_records: result,
+                        startDate: startDate,
+                        endDate: endDate
+                    });
+
+                },500);
+            }
+        });
+    
+
 	//request.url = "/admin/gateReport";
 	//request.app.handle(request,response);
 	

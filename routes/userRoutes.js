@@ -365,7 +365,7 @@ userRouter.post('/registerStudent',(req,res)=>{
 							}
 							else{
 							res.render("loginPage",{
-							title: "Successfully Register. Login to continue",
+							title: "Successfully Registered. Login to continue",
 							error: ""
 							})
 

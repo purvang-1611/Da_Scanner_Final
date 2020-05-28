@@ -28,66 +28,17 @@ function CheckQR(id,status)
          },
          success:function(data)
           {
-              let s1=Number(data[0]._id);
-              let batch_year=Math.trunc(s1/100000);
-              let batch_id=Math.trunc(s1/1000)%100;
-              let stu_id=Math.trunc(s1%1000);
-              //alert(batch_year);
-              //alert(batch_id);
-              //alert(stu_id);
-              
-              var x=Date.now();
-              var dat_obj=new Date(x);
-              var year=dat_obj.getFullYear();
-              //alert("final"+year);
-              if(batch_id==01)
-              {
-               if(batch_year<=year && batch_year>=year-4)
-               {
-                document.getElementById('studentId').value = data[0]._id;
-                
                 document.getElementById('hid-div').hidden=false;
                 document.getElementById('scan-div').hidden=true;
-                document.getElementById('sid').value=data[0]._id;
+                document.getElementById('sid').value=data._id;
            
                   
-                  
-
-                  
-               }
-               else{
-            
-                 document.getElementById('sid2').innerHTML="*ID is Invalid";
-               }
-             }
-             else if(batch_id==11 || batch_id==12)
-             {
-                if(batch_year<=year && batch_year>=year-2)
-                {
-                  document.getElementById('studentId').value = data[0]._id;
-                
-                  document.getElementById('hid-div').hidden=false;
-                  document.getElementById('scan-div').hidden=true;
-                  document.getElementById('sid').value=data[0]._id;
-           
-                }
-                else
-                {
-               
-                  document.getElementById('sid2').innerHTML="*ID is Invalid";
-                }
-             }
-             else{
-               
-               document.getElementById('sid2').innerHTML="*ID is Invalid";
-             } 
-
-            },
-            error:function(RXHDR,statusText,error)
-            { 
+          },
+          error:function(RXHDR,statusText,error)
+          { 
               let err=RXHDR.responseText;
               document.getElementById('sid2').innerHTML=err;
-            }   
+          }   
           
              
          

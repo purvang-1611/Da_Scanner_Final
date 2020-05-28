@@ -55,8 +55,8 @@ router.get('/lib_tmp_out',loggedin,function(req,res,next){
                 var id1;
                 for(i=0;i<docs.length;i++)
                 {
-                    id1=docs[i].user_id;
-                tmp_lib.find({user_id:id1},function(err,docs1){
+                    id1=docs[i].userId;
+                tmp_lib.find({userId:id1},function(err,docs1){
                  
                     if(err)
                     {
@@ -81,7 +81,7 @@ router.get('/lib_tmp_out',loggedin,function(req,res,next){
                             {
                                 //res.json(res1);
                                     const lib1=new lib({
-                                    user_id : docs1[0].user_id,
+                                    userId : docs1[0].userId,
                                     in_time :docs1[0].in_time,
                                     out_time:docs1[0].out_time,
                                     date:docs1[0].date
@@ -99,7 +99,7 @@ router.get('/lib_tmp_out',loggedin,function(req,res,next){
 
 
                                        
-                                        tmp_lib.deleteOne({user_id:lib1.user_id},function(err,result){
+                                        tmp_lib.deleteOne({userId:lib1.userId},function(err,result){
                                             if(err)
                                             {
                                                 res.json(err);
@@ -151,7 +151,7 @@ router.get('/:id?',loggedin,function(req,res,next){
     if(req.params.id)
     {
     const id1=req.params.id;
-    tmp_lib.find({user_id:req.params.id},function(err,docs){
+    tmp_lib.find({userId:req.params.id},function(err,docs){
         if(err)
         {
           
@@ -175,7 +175,7 @@ router.get('/:id?',loggedin,function(req,res,next){
                
                 const now=new Date();
                 const tmp=new tmp_lib({
-                    user_id : id1,
+                    userId : id1,
                     //in_time : dat_obj.getTime(),
                     in_time:new String(h+":"+m+":"+s),
                     out_time:null,
@@ -198,7 +198,7 @@ router.get('/:id?',loggedin,function(req,res,next){
             else{
 
 
-                tmp_lib.find({user_id:id1},function(err,docs1){
+                tmp_lib.find({userId:id1},function(err,docs1){
                    
                     if(err)
                     {
@@ -226,7 +226,7 @@ router.get('/:id?',loggedin,function(req,res,next){
                             {
                                 //res.json(res1);
                                     const lib1=new lib({
-                                    user_id : docs1[0].user_id,
+                                    userId : docs1[0].userId,
                                     in_time :docs1[0].in_time,
                                     out_time:docs1[0].out_time,
                                     date:docs1[0].date
@@ -244,7 +244,7 @@ router.get('/:id?',loggedin,function(req,res,next){
 
 
 
-                                        tmp_lib.deleteOne({user_id:id1},function(err,result){
+                                        tmp_lib.deleteOne({userId:id1},function(err,result){
                                             if(err)
                                             {
                                                 res.json(err);
@@ -312,7 +312,7 @@ router.post('/',function(req,res,next){
     var s=d1.getSeconds();
    
     const tmp=new tmp_lib({
-        user_id : req.body.user_id,
+        userId : req.body.studentId,
         //in_time : dat_obj.getTime(),
         in_time:new String(h+":"+m+":"+s),
         out_time:null,
@@ -374,5 +374,195 @@ router.delete('/:id',function(req,res,next){
         }
     })
 });
+
+// GENERATING REPORT FOR LIBRARY
+
+router.post("/generateReport",loggedin,(request,response)=>{
+
+	let option = request.body.reportOption;
+
+	let today = new Date();
+    let yyyy = today.getFullYear();
+
+    today = new Date();
+    let fdate  = new Date("2000-01-01");
+	let startDate = date.format(fdate, 'DD-MM-YYYY');
+	let endDate = date.format(today, 'DD-MM-YYYY');
+	console.log(today);
+	let startId = "200100000";
+	let endId = "999999999";
+
+	if(option == 2 || option == 3)
+	{
+		startId = request.body.studentId;
+		endId = request.body.studentId;
+	}
+
+	if(option != 2)
+	{
+		let sdate  = new Date(request.body.startDate);
+		let edate  = new Date(request.body.endDate);
+
+		startDate = date.format(sdate, 'DD-MM-YYYY');
+		endDate = date.format(edate, 'DD-MM-YYYY');
+
+		if(startDate > endDate)
+		{
+			let tempDate = startDate;
+			startDate = endDate;
+			endDate = tempDate;
+		}
+	}
+
+	console.log(startDate + " "+ endDate);
+	console.log(startId + " "+ endId);
+	startId = parseInt(startId, 10);
+	endId = parseInt(endId, 10);
+	// FOR DATA FROM BOTH TABLES
+	let libRec = {};
+	let tempRec = {};
+	lib.aggregate(([
+	{
+		"$lookup":
+		{
+			"from": "users",
+			"localField": "userId",
+			"foreignField": "_id",
+			"as": "libRecords"
+		}
+	},
+	{
+		"$unwind": "$libRecords"
+	},
+	{
+		"$project":
+		{
+			"libRecords.password": 0
+		}
+	},
+	{
+		"$match":
+		{
+			"$and":
+			[
+				{"$or":[{"date": {"$lte": endDate}},
+						//{"outDate": {"$lte": endDate}},
+						{"date":{"$eq": ""}}]},
+				{"$or":[{"date": {"$gte": startDate}},
+						//{"inDate": {"$gte": startDate}},
+						{"date":{"$eq": ""}}]},
+				{"userId": {"$gte": startId}},
+				{"userId": {"$lte": endId}}
+			]
+		}
+	}
+	]), (err, result)=>
+	{
+		if(err)
+		{
+			console.log("error while getting records for Report");
+			console.log(err);
+		}
+
+		console.log(startDate, endDate);
+		if(result.length !== 0)
+		{
+			/*response.render("reportViews/DisplayReport",
+			{
+				title: "Generated Report From Gate Reocrds",
+				messages: result,
+				startDate: startDate,
+				endDate: endDate
+			});*/
+			libRec = result;
+		}
+		else
+		{
+			/*response.render("reportViews/DisplayReport",
+			{
+				title: "Generated Report From Gate Reocrds",
+				messages: "No Data Found",
+				startDate: startDate,
+				endDate: endDate
+			});*/
+			libRec=undefined;
+		}
+	});
+
+	// FROM CURRENT PENDING ENTRY TABLE 
+	tmp_lib.aggregate(([
+		{
+			"$lookup":
+			{
+				"from": "users",
+				"localField": "userId",
+				"foreignField": "_id",
+				"as": "libRecords"
+			}
+		},
+		{
+			"$unwind": "$libRecords"
+		},
+		{
+			"$project":
+			{
+				"libRecords.password": 0
+			}
+		},
+		{
+			"$match":
+			{
+				"$and":
+				[
+					{"$or":[{"date": {"$lte": endDate}},
+							//{"outDate": {"$lte": endDate}},
+							{"date":{"$eq": ""}}]},
+					{"$or":[{"date": {"$lte": endDate}},
+							//{"inDate": {"$gte": startDate}},
+							{"date":{"$eq": ""}}]},
+					{"userId": {"$gte": startId}},
+					{"userId": {"$lte": endId}}
+				]
+			}
+		}
+		]), (err, result)=>
+		{
+			if(err)
+			{
+				console.log("error while getting records for Report");
+				console.log(err);
+			}
+	
+			console.log(startDate, endDate);
+			if(result.length !== 0)
+			{
+				console.log(result);
+				response.render("reportViews/DisplayLIBReport",
+				{
+					title: "Generated Report From Gate Reocrds",
+					tempRec: result,
+					libRec: libRec,
+					startDate: startDate,
+					endDate: endDate
+				});
+				
+			}
+			else
+			{
+				setTimeout(()=>{
+				response.render("reportViews/DisplayLIBReport",
+				{
+					title: "Generated Report From Gate Reocrds",
+					tempRec: null,
+					libRec: libRec,
+					startDate: startDate,
+					endDate: endDate
+                });
+            },1000);
+				//tempRec=undefined;
+			}
+		});
+
+})
 
 module.exports=router

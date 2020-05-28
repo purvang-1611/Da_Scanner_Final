@@ -22,9 +22,7 @@
 	FROM  <b id="startDate"> <%= startDate %> </b> 
 	TO  <b id="endDate"> <%= endDate %> </b> <br><br>
 
-	<% if (messages === "No Data Found") { %>
-		<h3>NO DATA FOUND</h3>
-	<% } else { %>
+	
 		<table style="width:100%" id="table">
 		 <thead>
 		    <th>StudentId</th>
@@ -37,9 +35,15 @@
 		    <th>VisitorsWithStudent</th>
 		  </thead>
 		  <tbody>
-			<% if (messages) { %>
-				<% if(messages.length > 0) { %>
-						<% for(mes of messages) { %>
+			  <tr>
+				  <td colspan="8" style="text-align:center; font-weight:bold;font-size:20px">Gate Full Entry Records</td> 
+			  </tr>
+			  <% if (gateRec == 'undefined') { %>
+				<h3>NO DATA FOUND</h3>
+			<% } else { %>
+			<% if (gateRec) { %>
+				<% if(gateRec.length > 0) { %>
+						<% for(mes of gateRec) { %>
 							<tr>
 								<td> <%= mes.userId %> </td>
 								<td> <%= mes.gaterecords.courseName %> </td>
@@ -52,10 +56,33 @@
 							</tr>
 						<% } %>
 				<% } %>
-			<% } %>
+			<% } }%>
+			<tr>
+				<td colspan="8" style="text-align:center; font-weight:bold;font-size:20px;">Gate Pending Entry Records</td> 
+			</tr>
+		<% if (tempRec == 'undefined') { %>
+			  <h3>NO DATA FOUND</h3>
+		  <% } else { %>
+			<% if (tempRec) { %>
+				<% if(tempRec.length > 0) { %>
+						<% for(mes of tempRec) { %>
+							<tr>
+								<td> <%= mes.userId %> </td>
+								<td> <%= mes.gaterecords.courseName %> </td>
+								<td> <%= mes.inDate %> </td>
+								<td> <%= mes.inTime %> </td>
+								<td> <%= mes.outDate %> </td>
+								<td> <%= mes.outTime %> </td>
+								<td> - </td>
+								<td> <%= mes.noOfVisitors %> </td>
+							</tr>
+						<% } %>
+				<% } %>
+			<% }} %>
+
 		</tbody>
 		</table>
-	<% } %>	
+	
 	<!-- <img src="/static/Images/DA_logo.png" > -->
 <% var rootPath = '../'; %>
 

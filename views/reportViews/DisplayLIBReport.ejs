@@ -26,55 +26,52 @@
 		 <thead>
 		    <th>StudentId</th>
 		    <th>Student Name</th>
-		    <th>Issue Date</th>
-            <th>Return Date</th>
-            <th> Equipment Name</th>
-            <th>Quantity</th>
-            <th>Loan Amount</th>
+		    <th>In Time</th>
+            <th>Out Time</th>
+            <th>Date</th>
+            <th>Course</th>
 		  </thead>
 		  <tbody>
             <tr>
-                <td colspan="7" style="text-align:center; font-weight:bold;font-size:20px">SAC Full Entry Records</td> 
+                <td colspan="6" style="text-align:center; font-weight:bold;font-size:20px">RC Current IN Entry Records</td> 
             </tr>
-            <% if (sac_records === null) { %>
+            <% if (tempRec === null) { %>
                 <h3>NO DATA FOUND</h3>
             <% } else { %>
-			<% if (sac_records) { %>
-				<% if(sac_records.length > 0) { %>
-						<% for(mes of sac_records) { %>
+			<% if (tempRec) { %>
+				<% if(tempRec.length > 0) { %>
+						<% for(mes of tempRec) { %>
 							<tr>
-								<td> <%= mes.student_id %> </td>
-								<td> <%= mes.user_records.fName %> <%= mes.user_records.lName %>   </td>
-								<td> <%= mes.issue_date %> </td>
-								<td> <%= mes.return_date %> </td>
-                                <td> <%= mes.inventory_records.name%></td>
-                                <td><%= mes.quantity %></td>
-                                <td> <%= mes.loan %></td>
+								<td> <%= mes.userId %> </td>
+								<td> <%= mes.libRecords.fName %> <%= mes.libRecords.lName %>   </td>
+								<td> <%= mes.in_time %> </td>
+								<td> <%= mes.out_time %> </td>
+                                <td> <%= mes.date%></td>
+                                <td><%= mes.libRecords.courseName %></td>
 							</tr>
 						<% } %>
 				<% } %>
             <% }} %>
             <tr>
-                <td colspan="7" style="text-align:center; font-weight:bold;font-size:20px">SAC Records (Currently Borrowed)</td> 
+                <td colspan="7" style="text-align:center; font-weight:bold;font-size:20px">RC Records (FULL ENTRY)</td> 
             </tr>
-            <% if (temp_records == null) { %>
+            <% if (libRec == null) { %>
                 <h3>NO DATA FOUND</h3>
             <% } else { %>
-			<% if (temp_records) { %>
-				<% if(temp_records.length > 0) { %>
-						<% for(mes of temp_records) { %>
-							<tr>
-								<td> <%= mes.student_id %> </td>
-								<td> <%= mes.user_records.fName %> <%= mes.user_records.lName %>   </td>
-								<td> <%= mes.issue_date %> </td>
-								<td> NOT RETURNED </td>
-                                <td> <%= mes.inventory_records.name%></td>
-                                <td> <%= mes.quantity %></td>
-                                <td>-</td>
-							</tr>
-						<% } %>
-				<% } %>
-            <% }} %>
+                <% if (libRec) { %>
+                    <% if(libRec.length > 0) { %>
+                            <% for(mes of libRec) { %>
+                                <tr>
+                                    <td> <%= mes.userId %> </td>
+                                    <td> <%= mes.libRecords.fName %> <%= mes.libRecords.lName %>   </td>
+                                    <td> <%= mes.in_time %> </td>
+                                    <td> <%= mes.out_time %> </td>
+                                    <td> <%= mes.date%></td>
+                                    <td><%= mes.libRecords.courseName %></td>
+                                </tr>
+                            <% } %>
+                    <% } %>
+                <% }} %>
 
 		</tbody>
 		</table>
@@ -95,7 +92,7 @@
 		var doc = new jsPDF('p', 'pt');
 		var res = doc.autoTableHtmlToJson(document.getElementById('table'));
 		var height = doc.internal.pageSize.height;
-		doc.text("DAIICT SAC ISSUE/RETURN RECORDS FROM "+ startDate + " TO " + endDate, 20, 50);
+		doc.text("DAIICT RC IN/OUT RECORDS FROM "+ startDate + " TO " + endDate, 20, 50);
 		// doc.autoTable(res.columns, res.data, {
 		//   startY: 200
 		// });
@@ -109,10 +106,10 @@
 			afterPageContent: function(data)
 			{
 				doc.setFontSize(20)
-				doc.text("DAIICT - SAC RECORDS", 50, height - data.settings.margin.bottom + 10);
+				doc.text("DAIICT - RC RECORDS", 50, height - data.settings.margin.bottom + 10);
 			}
 		});
-		doc.save("DA SAC ISSUE/RETURN Records FROM "+ startDate + " TO " + endDate);
+		doc.save("DA RC IN/OUT Records FROM "+ startDate + " TO " + endDate);
 	};
 </script>
 
