@@ -30,6 +30,7 @@ function isNumberKey(evt)
             }
             else{
                 document.getElementById('error-ID').innerHTML="";
+                document.getElementById('emailId').value=name+"@daiict.ac.in";
                 var year=name.substr(0,4)
                 var cid=name.substr(4,2);
                 var flag=0;
@@ -43,6 +44,7 @@ function isNumberKey(evt)
                 }     
                 else{
                     document.getElementById('error-ID').innerHTML="";
+                    document.getElementById('emailId').value=name+"@daiict.ac.in";
                 }
             }
         }
@@ -51,7 +53,7 @@ function isNumberKey(evt)
             
             if(name.length<22){
                 document.getElementById('error-Email').innerHTML="*Email ID is Invalid";
-                document.getElementById('emailId').focus();
+                //document.getElementById('emailId').focus();
             }
             else{
                 var year=name.substr(0,4)
@@ -65,7 +67,7 @@ function isNumberKey(evt)
                 if(year<2001||sid<='000'||em!="@daiict.ac.in"){
                 
                     document.getElementById('error-Email').innerHTML="*Email ID is Invalid";
-                    document.getElementById('emailId').focus();
+                    //document.getElementById('emailId').focus();
                 }     
                 else{
                     document.getElementById('error-Email').innerHTML="";

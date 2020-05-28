@@ -118,12 +118,13 @@ app.get("/",(request, response) =>
     //console.log(msg + "heyyyyy");
     if((cookie || request.isAuthenticated()) && msg=="")
     {
+        console.log("here");
         //console.log("hey");
         response.redirect('/users/loadHomePage');
 
     }else{
     //response.redirect("/admin/loadAddUser");
-    console.log(msg + "heyyyyy");
+    console.log(msg + "heyyyyy1");
 	response.render("loginPage",
 	{
         title: "Helloo, Welcome to DA-Scanner.",
@@ -136,7 +137,7 @@ app.get("/index",(request, response) =>
 {
 
     let cookie = request.cookies['remember_me'];
-    console.log(cookie);
+    //console.log(cookie);
     let msg= request.flash('message')
    // console.log(msg + "heyyyyy");
     if((cookie || request.isAuthenticated()) && msg=="")
@@ -146,7 +147,7 @@ app.get("/index",(request, response) =>
 
     }else{
     //response.redirect("/admin/loadAddUser");
-    console.log(msg + "heyyyyy");
+    //console.log(msg + "heyyyyy");
 	response.render("loginPage",
 	{
         title: "Helloo, Welcome to DAScanner.",

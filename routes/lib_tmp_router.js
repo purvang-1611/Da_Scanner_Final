@@ -15,11 +15,19 @@ var loggedin = function (req,res,next)
                 res.redirect('/');
             }
             else{
-                if(rows[0].userTypeId==4)
+                if(rows.length==0){
+                    //console.log("Enabled false");
+                    req.flash('message','Invalid User (You are disabled or not logged IN)');
+                    res.redirect('/');
+                }
+                else if(rows[0].userTypeId==4)
                 {
+					//console.log("correct");
                     next() // if logged in
                 }
                 else{
+                    //console.log("Invalid");
+                    req.flash('message','Invalid User (You are disabled or not logged IN');
                     res.redirect('/');
                 }
             }

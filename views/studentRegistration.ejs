@@ -32,10 +32,10 @@
     <%
         var fname,lname,email,stuID;
         if(data){
-            fname=data.fName;
-            lname=data.lName;
-            email=data.userEmailId;
-            stuID=data._id;
+            fname=data.fname;
+            lname=data.lname;
+            email=data.emailId;
+            stuID=data.stuID;
         }
         
         var hey = "asdasd";
@@ -50,6 +50,7 @@
                 </div>
                
                     <center><h2 class="title">Student Registration</h2></center>
+                    <center><h4 class="title" style="color:red"><%if(error){%> <%=error%> <%}%></h4></center>
                     <form method="POST" action="/users/registerStudent" onSubmit = "return validate(this)">
                         <div class="input-group">
                             <input class="input--style-1" type="text" placeholder="FIRST NAME"  onkeypress="return isCharKey(event)" name="fname" id="fname"  value="<%=fname%>" required>
@@ -59,19 +60,19 @@
                                 <input class="input--style-1" type="text" placeholder="LAST NAME" name="lname" id="lname" value="<%=lname%>" required>
                         </div>
                         <br/>
-                        <div  class="input-group">
-                                <input class="input--style-1" type="text" placeholder="Email" name="emailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" required>
-                        </div>
-
-                        <span id="error-Email" style="color:red;"></span>   
-                        <br/>
+                        
                         <br/>
                         <div class="input-group">
                                  <input class="input--style-1" type="text" placeholder="Student ID Number" onkeypress="return isNumberKey(event)"  onfocusout="IDCheck()" maxlength="9"  name="stuID" id="stuID"  value="<%=stuID%>" required>
                         </div>
                         <span id="error-ID" style="color:red;"></span>
                         <br/>
-                        
+                        <div  class="input-group">
+                            <input class="input--style-1" type="text" placeholder="Email" name="emailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" readonly="readonly" >
+                        </div>
+
+                        <span id="error-Email" style="color:red;"></span>   
+                        <br/>
                         <div class="input-group">
                                 <input class="input--style-1" type="password" placeholder="Password"  name="password" id="Pass1" required>
                        </div>

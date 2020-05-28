@@ -12,38 +12,44 @@ const gateRouter = express.Router();
 
 var loggedin = function (req,res,next)
 {
-    // console.log(req.user);
-    if(req.isAuthenticated())
+    
+    if(req.cookies['remember_me']){
+        req.user = req.cookies['remember_me'];
+    }
+    if(req.isAuthenticated() || req.user)
     {
-        User.find({_id : req.user._id},function(err,rows){
+		
+        User.find({$and : [{_id : req.user._id},{enabled:true}]},function(err,rows){
             if(err)
             {
                 res.redirect('/');
             }
             else{
-                if(rows[0].userTypeId==2)
+                if(rows.length==0){
+                    //console.log("Enabled false");
+                    req.flash('message','Invalid User (You are disabled or not logged IN)');
+                    res.redirect('/');
+                }
+                else if(rows[0].userTypeId==2)
                 {
+					//console.log("correct");
                     next() // if logged in
                 }
                 else{
+                    //console.log("Invalid");
+                    req.flash('message','Invalid User (You are disabled or not logged IN');
                     res.redirect('/');
                 }
             }
-        })
-        
-       
+        })  
     }
-    else if(req.cookies['remember_me']){
-		req.user = req.cookies['remember_me'];
-		next();
-	}             
 	else
 		res.redirect('/');
 }
-
-gateRouter.get("/loadGateScanner",loggedin,(request, response, next) =>
+gateRouter.get("/loadGateScanner",loggedin,(request, response) =>
 {
-	response.render("studentViews/GateScanQR",
+	console.log("in gatscan");
+	response.render("GateViews/GateScanQR",
 	{
 		title: "DA Gate Entry/Exit System",
 		expressFlash: request.flash("success")

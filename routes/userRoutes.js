@@ -64,10 +64,12 @@ userRouter.get("/loadHomePage",loggedin, (req,res)=>{
 	}
 	else if(userType==2)
 	{
-		res.render('GateViews/GateScanQR',{
-			title:user.fName + user.lName,
-			route: "gate",
-		});
+		// res.render('GateViews/GateScanQR',{
+		// 	title:user.fName + user.lName,
+		// 	route: "gate",
+		// });
+		console.log("loading");
+		res.redirect("/gate/loadGateScanner");
 	}
 	else if(userType==3)
 	{
@@ -324,8 +326,11 @@ userRouter.post('/registerStudent',(req,res)=>{
 	User.findById(req.body.stuID, (err,doc)=>{
 		if(doc)
 		{
-			req.session.userData = doc;
-			res.redirect("/");
+			
+			res.render("studentRegistration",{
+				data: req.body,
+				error: "User already exists"
+			})
 				
 		}
 		else{
@@ -348,7 +353,16 @@ userRouter.post('/registerStudent',(req,res)=>{
 					user.userEmailId = req.body.emailId;
 					user.enabled = true;
 					user._id = ID;
-
+					let today = new Date().getFullYear();
+					console.log(user.batchYear + " " + today);
+					if(parseInt(user.batchYear) < today)
+					{
+						res.render("studentRegistration",{
+							data:req.body,
+							error:"You are an alumni, you can't register"
+						})
+						return;
+					}
 					// Appending ID with time to generate QR string 
 					let id1=user._id;
 					id1=id1.toString();
@@ -360,7 +374,7 @@ userRouter.post('/registerStudent',(req,res)=>{
 					user.save().then(result=>{
 
 						 qr.generateQR(user._id,id1,(flag)=>{
-							if(!flag){
+						 if(!flag){
 								console.log(err);
 							}
 							else{
@@ -381,6 +395,7 @@ userRouter.post('/registerStudent',(req,res)=>{
 
 				}
 				else{
+					console.log(req.body.emailId);
 					res.render("studentRegistration",{
 						data: req.body,
 						error: "ID is invalid - Course does not exist"
