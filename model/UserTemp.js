@@ -53,8 +53,8 @@ let userSchema = new mongoose.Schema(
 	{
 		type:Number,
 		required: false
-	},
-	resetPasswordToken: String,
+    },
+    resetPasswordToken: String,
   	resetPasswordExpires: Date
 });
 
@@ -67,4 +67,4 @@ let userSchema = new mongoose.Schema(
   };
 
 
- module.exports = mongoose.model("Users", userSchema);
+ module.exports = mongoose.model("user_temp", userSchema);

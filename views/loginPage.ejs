@@ -6,6 +6,7 @@
         <title>
             Login Form
         </title>
+        <link rel="shortcut icon" href=""/>
         <link href="/css/Login_CSS/Login_css.css" rel="stylesheet">
     </head>
     <body>
@@ -29,8 +30,8 @@
                             <input type="password" placeholder="Enter Password" name="password" id="psw" onfocusout="password()" required>
                         </div>
                         <span id="error-password" style="color:red;"><%if (error) {%> <%=error%> <%}%></span>
-                        <br/>
-                        
+                        <br/><br/>
+                        <span id="" style="color:green;"> <%if (info) {%> <%=info%> <%}%></span> <br/>
                         <label>
                             <input type="checkbox" checked="checked" name="rememberme"> Remember me
                           </label>
@@ -54,61 +55,3 @@
 
 	</div>
 </html>
-
-<!--
-    <html>
-    <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>
-            Login Form
-        </title>
-        <link href="css/Login_CSS/Login_css.css" rel="stylesheet">
-    </head>
-    <body>
-        <div  class="size ">
-            <form method="POST" action="/home/authUser">
-                <div>
-                    <div>
-                        <img src="pic/course-bg-3.jpg" alt="daiict" class="image">
-                    </div>
-                </br>
-                    <div class="card container">
-                        <h3> <%= title %></h3>
-                        <form action="/home/authUser" method="POST">
-                        <div class="input-group">
-                        
-                            <input type="text" placeholder="Enter UserID" name="userID" id="uname" maxlength="9" onfocusout="username()" required>   
-                        </div>
-                        <span id="error-ID" style="color:red;"></span>
-                        <br/>
-                        <br/>
-                        <div class="input-group">
-                            <input type="password" placeholder="Enter Password" name="password" id="psw" onfocusout="password()" required>
-                        </div>
-                        <span id="error-password" style="color:red;"><%if (error) {%> <%=error%> <%}%></span>
-                        <br/>
-                        <br/>
-                        <label>
-                            <input type="checkbox" checked="checked" name="rememberme"> Remember me
-                          </label>
-                            <button type="submit">Login</button>
-                        </form>
-                            
-                    </div>
-
-                    
-                    <div class="container" style="background-color:#f1f1f1">
-                            <button type="button" class="cancelbtn" onclick="location.href='Registration.html';">Create Account</button>
-                            <br/>
-                            <center><a href="ForgotPassword.html" style="color:blue"> Forgot password?</a></center>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <script src="js/Login_JS/login.js"></script>
-    </body>
-</html>
-
-
-
--->

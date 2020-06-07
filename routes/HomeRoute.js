@@ -16,7 +16,7 @@ module.exports = function (passport){
         //console.log("cook" + req.cookies['remember_me']);
         if(req.body.rememberme)
         {
-            res.cookie("remember_me",req.user,{maxAge: 6000*1000});
+            res.cookie("remember_me",req.user,{maxAge: 24*60*60*1000}); //1 DAY cookie
         }
         res.redirect("/users/loadHomePage");
     });

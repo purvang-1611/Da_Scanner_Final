@@ -1,17 +1,50 @@
 <!DOCTYPE html>
 <html>
 <link>
-  <title>QR scanner</title>
+  <title>RC Homepage</title>
   
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
     <script type="text/javascript">
 
+var isValid=true;
+function getLocation(callback) {
+    if (navigator.geolocation) {
+    //alert("hey");
+     navigator.geolocation.getCurrentPosition((position)=>{
+
+      var pos ={
+        lat: position.coords.latitude,
+        lon: position.coords.longitude
+      }
+
+      return callback(pos);
+    });
+    //alert(a);
+    } else {
+    alert("Geolocation is not supported by this browser.");
+    isValid=true;
+    }
+
+  }
 
 function CheckQR(id,status)
     {
-    $.ajax(
+      getLocation(function(position){
+          //alert(position.lat + " --- " + position.lon);
+          //23.0079356 --- 72.5260686
+          let lat=position.lat;
+          let lon=position.lon;
+          //TODO CHANGE FOR LIB
+          if(lat>=23 && lat<=24 && lon >= 72 && lon<=73){
+            isValid=true;
+          }
+     
+     
+      if(isValid){
+      
+      $.ajax(
      {
          type:'post',
          url:'/scanqr/',
@@ -21,7 +54,7 @@ function CheckQR(id,status)
          mes: "call from ajax",
          },
       success:function(data){
-    
+        document.getElementById('sid2').innerHTML="";
                  window.location.href="/lib_tmp/"+data._id;  
               
              },
@@ -35,7 +68,12 @@ function CheckQR(id,status)
 
          
        });
-     }
+
+      }else{
+        alert("You are not in you office vicinity. You cannot process requests right now");
+      }
+    });
+  }
     
     
          
@@ -64,7 +102,7 @@ function CheckQR(id,status)
 
                   success: function(data){
                     decryptedID = data;
-                    alert(decryptedID);
+                    //alert(decryptedID);
                   
                     let s1=Number(decryptedID);
                   }
@@ -163,10 +201,11 @@ function CheckQR(id,status)
           document.getElementById('scan-div').hidden=false;
         }
     </script>
+     <link rel="stylesheet" type="text/css" href="/stylesheets/homepageLIB.css">
      <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    
-    <link rel="stylesheet" type="text/css" href="/stylesheets/homepageLIB.css">
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
+   
   </link>
     
     
@@ -177,7 +216,6 @@ function CheckQR(id,status)
   table {
   
   table-layout: fixed;
-  text-align: left;
   width:80px;
   overflow: hidden;
   margin-top: 13px;
@@ -219,15 +257,15 @@ td select{
     <%- include('lib_header') %> 
 <div class="container-fluid">
 <form align="center" method="POST"action="#">
-	
+	<br/>
 	<h1   style="color: #0060b4;font-weight: bolder;">Library</h1>
 	
 	
 	<label  style="color: #0060b4;">Available seats: </label>
-	<img src="http://localhost:3000/images/chair.png" width="100px" height="100px">
+	<img src="/images/chair.png" width="100px" height="100px">
         <h3 style="display:inline;color:#0060b4"><%= avl_seats %></h3>
   <br>
-  
+  <br/>
 <div class="row">
   <div class="col-md-6">
 	<button type="button" id="startButton" class="lib_btn" onclick="f1()">Scan QR Code</button>
@@ -238,7 +276,7 @@ td select{
   <div id="scan-div" hidden>
           
         
-    <table align="center" style="width: 100%;">
+    <table align="center" style="width: 100%; border-spacing: 0 10px; border-collapse: separate;">
       <tr align="center">
         
         
@@ -265,7 +303,7 @@ td select{
         <input type="text" name="studentId" class="sid" id="studentId">
         <span id="sid2" style="color: red"></span>
        </td>
-       
+       <br>
      </tr>
      <tr align="center">
        <td>
@@ -310,7 +348,7 @@ td select{
 
 <div class="col-md-6">
   <div class="table-responsive">
-  <table class="table" style="font-size: medium;width: 100%;">
+  <table class="table" id="libTable" style="font-size:medium;width: 100%;">
     <thead style="background-color:#20232e;color: white;" >
       <tr>
         
@@ -337,22 +375,30 @@ td select{
 
 </div>
 </div>
-
-<br>
- 
-
-	<script language="javascript" type="text/javascript">
-		function myalert()
-		{ 
-				alert("Available seats are: " )
-		} 
+<script src = "https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src = 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
 
 
-	</script>
-<br/>
-<br/>
+	
 </form>
 </div>
+<style>
+  #libTable_filter input{
+	margin-right:50px;
+}     
+</style>
 <%- include('../footer') %> 
+<script language="javascript" type="text/javascript">
+  function myalert()
+  { 
+      alert("Available seats are: " )
+  } 
+
+  $(document).ready( function () {
+  $('#libTable').DataTable({
+    "scrollX" : true
+  });
+} );
+</script>
 </body>
 </html>

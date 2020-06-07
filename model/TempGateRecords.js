@@ -11,12 +11,12 @@ let tempGateRecordsSchema =new Schema(
 	},
 	inDate:
 	{
-		type: String,
+		type: Date,
 		default: ""
 	},
 	outDate:
 	{
-		type: String,
+		type: Date,
 		default: ""
 	},
 	inTime:

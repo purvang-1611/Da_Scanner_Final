@@ -7,6 +7,7 @@
             <style>
             
             </style>
+            <title>Inventory Management DA-Scanner</title>
         </head>
         <body>
             
@@ -20,7 +21,7 @@
           <div class="row">
               <div class="col-md-6">
 
-                <div class="table-responsive">
+                <div class="table-responsive" style="overflow: auto;">
                     <table class="table" style="font-size: medium;">
                         <thead style="background-color: #20232e;color: white;">
                             <th>Equipment Name</th>
@@ -69,7 +70,7 @@
                     <tr></tr>
                     <tr>
                         <td><label class="qty" style="color: #0060b4;">Quantity: </label></td>
-                        <td><input type="number" class="qty1" id="qty1" onkeyup="validateForm()" required name="totalQuantity"></td>
+                        <td><input type="number" class="qty1" id="qty1" onkeyup="validateForm()" required name="totalQuantity" min="1"></td>
                     </tr>
                         <tr> <td></td> <td><span id="error-qty" style="color: red" ></span></td></tr>
                     <tr></tr>
@@ -77,7 +78,7 @@
                         <tr></tr>
                     <tr align="center">
                     <td><button type="submit" class="btn3">Submit</button></td>
-                    <td><button type="reset" class="btn4" click="clearfun()">Clear</button></td>
+                    <td><button type="reset" class="btn4" onclick="clearfun()">Clear</button></td>
                 </tr>
                 </table>
                 <br/>
@@ -106,7 +107,7 @@
                                         <select required id="sel1" class="sel" name="equipmentID" onchange="v1()">
                                                 <option value="">Select equipment</option>
                                                 <% data.stock.forEach(result=>{ %>
-                                                    <option  data-dft="<%= result.NumberOfDefects %>" value="<%= result._id %>"><%= result.name %></option>
+                                                    <option  data-dft="<%= result.NumberOfDefects %>" data-avl="<%= result.NumberOfAvailable %>" value="<%= result._id %>"><%= result.name %></option>
                                                 <% }) %>
                                                 </select>
                                 </td>
@@ -119,7 +120,7 @@
                                         <br>
                                         <span style="color: red; font-size: 15px;" >(quantity will be added in current quantity)</span>
                                     </td>
-                                    <td><input type="number" class="qty1" id="qty1" name="quantity"></td>
+                                    <td><input type="number" class="qty1" id="qty1" name="quantity" onkeyup="validateUpdateForm()" min='1'></td>
                                 </tbody>   
                                 </tr>
                             <tr></tr>
@@ -130,7 +131,10 @@
                                     <br>
                                     <span style="color: red; font-size: 15px;" >(Defects will be added in current quantity)</span>
                                 </td>
-                                <td><input type="number" class="qty1" id="defects1" name="Defects"></td>
+                                <td>
+                                    <input type="number" class="qty1" id="defects1" name="Defects" onkeyup="validateUpdateForm();checkdefect();" min='1'>
+                                    <br><br><br><span id="error-dft" style="color: red" ></span>
+                                </td>
                                 </tbody>
                             </tr>
                         <tr></tr>
@@ -140,10 +144,12 @@
                                     <br>
                                     <span style="color: red; font-size: 15px;" >(Repair will be added in current quantity)</span>
                                 </td>
-                                <td><input type="number" class="rpr1" id="repair1" name="Repair"></td>
+                                <td>
+                                    <input type="number" class="rpr1" id="repair1" name="Repair" onkeyup="validateUpdateForm();checkrpr();" min='1'>
+                                    <br><br><br><span id="error-rpr" style="color: red" ></span>
+                                </td>
                             </tbody>
                             <tbody id="rpr3">
-                                
                                 <td colspan="2"><span style="color:red;font-size: 15px;"> No Defects </span></td>
                             </tbody>
                             
@@ -155,7 +161,7 @@
                         </tr>
                             <tr align="center">
                             <td><button type="submit" class="btn3" id="submitBtn" onclick="submitFn()">Submit</button></td>
-                            <td><button type="reset" class="btn4" click="clearfun()">Clear</button></td>
+                            <td><button type="reset" class="btn4" onclick="clearfun()">Clear</button></td>
                         </tr>
                         </table>
                         <br/>
@@ -172,22 +178,67 @@
 
 
             <script>
+function checkrpr()
+            {
+                
+                let box = document.getElementById('repair1');
+                    let x=document.getElementById('sel1');
+                    
+                    var y=x.options[x.selectedIndex].getAttribute('data-dft');
+                    var dft_no=Number(y);
+                    if(box.value>dft_no)
+                    {
+                        document.getElementById('error-rpr').innerHTML="Repair can not be more than "+dft_no;
+                        document.getElementById('repair1').focus();
+                        document.getElementById('submitBtn').disabled=true;
+                        
+                    } 
+                    else{
+                        document.getElementById('error-rpr').innerHTML="";
+                        document.getElementById('submitBtn').disabled=false;
+                        
+                    }
+            }
+            function checkdefect()
+            {
+                
+                let box = document.getElementById('defects1');
+                    let x=document.getElementById('sel1');
+                    
+                    var y=x.options[x.selectedIndex].getAttribute('data-avl');
+                    let avl_no=Number(y);
+                    
+                    if(box.value>avl_no)
+                    {
+                        document.getElementById('error-dft').innerHTML="Defects can not be more than "+avl_no;
+                        document.getElementById('defects1').focus();
+                        document.getElementById('submitBtn').disabled=true;
+                        
+                    } 
+                    else{
+                        document.getElementById('error-dft').innerHTML="";
+                        document.getElementById('submitBtn').disabled=false;
+                        
+                    }
+            }
                 let Defected_Items=1;
                 document.getElementById('rpr3').hidden=true;
                 function v1()
                 {
+                    let defect = document.getElementById('rrpr1');
                     let x=document.getElementById('sel1');
                     
                     var y=x.options[x.selectedIndex].getAttribute('data-dft');
       
                       Defected_Items=Number(y);
-                      if(Defected_Items==0)
+                      if(Defected_Items==0 && defect.checked)
                       {
                           document.getElementById('rpr2').hidden=true;
                           document.getElementById('rpr3').hidden=false;
                       }
-                      else
+                      else if(Defected_Items>0 && defect.checked)
                       {
+                          //alert("here");
                         document.getElementById('rpr2').hidden=false;
                           document.getElementById('rpr3').hidden=true;
                       }

@@ -30,7 +30,7 @@ var loggedin1 = function (req,res,next)
 		res.redirect('/index');
 }
 
-
+// CHECKING IF STUDENT IS VALID
 router.get('/',loggedin1,function(req,res,next){
 
     console.log("in header route");

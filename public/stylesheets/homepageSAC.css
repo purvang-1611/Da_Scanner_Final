@@ -2,7 +2,6 @@ body{
 	margin: 0;
 	align-self: center;
 	background-color: black;
-	font-size: 10px;
 	font-family: sans-serif;
 }
 
@@ -17,7 +16,12 @@ body{
 
 }
 .sel1,.qty,.sid1{
-	font-size: 1.75em;
+	font-size: 1.3em;
+	color: #0060b4;
+}
+table{
+	border-collapse: separate;
+	border-spacing: 0 20px;
 }
 
 /* .menu1 a{
@@ -41,7 +45,7 @@ body{
 
 @media only screen and (min-width: 1312px){
 	form{
-		font-size: 40px; 
+		font-size:30px;
 		width:100%;
 		font-family: sans-serif;
 		background-color: white;
@@ -64,7 +68,7 @@ body{
 	.updatebtn{
 		background-color: #20232e;
 	color: white;
-	font-size: 1.50em;
+	
 	padding: 10px 10px;
 	border: none;
 	cursor: pointer;
@@ -86,7 +90,7 @@ body{
 .sel,.qty1,.sid{
 	width:100%;
 	height:7vh ;
-	font-size:1.75em;
+	
 	border:1px solid black
 }
 	
@@ -119,9 +123,7 @@ body{
 
 }	
 }
-span{
-	font-size:20px;
-}
+
 
 @media only screen and (max-width: 1024px){
 	.chooseBtn{
@@ -141,7 +143,7 @@ span{
 	.updatebtn{
 		background-color: #20232e;
 	color: white;
-	font-size: 1.10em;
+
 	padding: 8px 5px;
 	border: none;
 	cursor: pointer;

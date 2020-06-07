@@ -14,12 +14,17 @@ function isNumberKey(evt)
          else
             return false;
       }
-      function validate(){
+      function validate(e){
+          //alert("hey");
         var password1 = document.getElementById('Pass1').value; 
         var password2 = document.getElementById('Pass2').value; 
-        if(password1!=password2){
-            document.getElementById('error-Password').innerHTML="*Password are not same";
+        if(password1!=password2 || password1.length < 6 || password2.length <6){
+            document.getElementById('error-Password').innerHTML="*Passwords must match and must be atleast 6 characters";
+            document.getElementById('submitButton').disabled=true;
             //document.getElementById('Pass2').focus();
+        }else{
+            document.getElementById('error-Password').innerHTML="";
+            document.getElementById('submitButton').disabled=false;
         }
       }
       function IDCheck(){

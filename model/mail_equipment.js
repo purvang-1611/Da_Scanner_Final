@@ -20,8 +20,8 @@ var demo={
             var mailOptions={
                 from: process.env.mailID,
                 to:email_id,
-                subject:"equipment borrowed",
-                text:"You have borrowed  "+ demo.quantity + " "+rows.name+ "\n\n Make sure you return before this "+new Date(dat_obj.getFullYear(),dat_obj.getMonth(),dat_obj.getDate()+7)+ " otherwise pentaly is charged"
+                subject:"Equipment borrowed",
+                text:"You have borrowed  "+ demo.quantity + " "+rows.name+ "\n\n Make sure you return this before -  "+new Date(dat_obj.getFullYear(),dat_obj.getMonth(),dat_obj.getDate()+7).toDateString()+ " otherwise loan will be charged: - Rs.5 per day per equipment"
             };
             transporter.sendMail(mailOptions,function(error,info){
                 if(error){

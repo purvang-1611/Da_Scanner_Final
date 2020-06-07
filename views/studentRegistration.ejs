@@ -13,18 +13,27 @@
     <title>Student Registration</title>
     
     <!-- Icons font CSS-->
-    <link href="css/Registration_CSS/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="css/Registration_CSS/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="/css/Registration_CSS/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="/css/Registration_CSS/font-awesome.min.css" rel="stylesheet" media="all">
     <!-- Font special for pages-->
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
 
     <!-- Vendor CSS-->
-    <link href="css/Registration_CSS/select2.min.css" rel="stylesheet" media="all">
-    <link href="css/Registration_CSS/daterangepicker.css" rel="stylesheet" media="all">
+    <link href="/css/Registration_CSS/select2.min.css" rel="stylesheet" media="all">
+    <link href="/css/Registration_CSS/daterangepicker.css" rel="stylesheet" media="all">
 
     <!-- Main CSS-->
     <link href="/css/Login_CSS/Login_css.css" rel="stylesheet">
-    <link href="css/Registration_CSS/main.css" rel="stylesheet" media="all">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+   <!-- <link href="/css/Registration_CSS/main.css" rel="stylesheet">-->
+    <style>
+        .input-group{
+            margin-bottom: 0px;
+        }
+        input{
+            font-size:15px;
+        }
+    </style>
 </head>
 
 <body>
@@ -47,11 +56,13 @@
             <div class="card container">
                 <div>
                     <img src="https://www.daiict.ac.in/wp-content/uploads/2019/01/logo-2018.png" class="img1 img-responsive"/>
+                    <div class="loader" id="loader"></div>
                 </div>
                
                     <center><h2 class="title">Student Registration</h2></center>
                     <center><h4 class="title" style="color:red"><%if(error){%> <%=error%> <%}%></h4></center>
-                    <form method="POST" action="/users/registerStudent" onSubmit = "return validate(this)">
+                    <br/>
+                    <form method="POST" action="/users/registerStudent"  id="stuRegForm">
                         <div class="input-group">
                             <input class="input--style-1" type="text" placeholder="FIRST NAME"  onkeypress="return isCharKey(event)" name="fname" id="fname"  value="<%=fname%>" required>
                         </div>
@@ -61,14 +72,13 @@
                         </div>
                         <br/>
                         
-                        <br/>
                         <div class="input-group">
-                                 <input class="input--style-1" type="text" placeholder="Student ID Number" onkeypress="return isNumberKey(event)"  onfocusout="IDCheck()" maxlength="9"  name="stuID" id="stuID"  value="<%=stuID%>" required>
+                                 <input class="input--style-1" type="text" placeholder="Student ID" onkeypress="return isNumberKey(event)"  onfocusout="IDCheck()" maxlength="9"  name="stuID" id="stuID"  value="<%=stuID%>" required>
                         </div>
                         <span id="error-ID" style="color:red;"></span>
                         <br/>
                         <div  class="input-group">
-                            <input class="input--style-1" type="text" placeholder="Email" name="emailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" readonly="readonly" >
+                            <input class="input--style-1" type="text" placeholder="Email (DA-IICT)" name="emailId" id="emailId" onfocusout="EmailCheck()"  value="<%=email%>" readonly="readonly" >
                         </div>
 
                         <span id="error-Email" style="color:red;"></span>   
@@ -83,8 +93,10 @@
                         <span id="error-Password" style="color:red;"></span>   
                         <br/>
                         <br/>
+                        <p style="color:red ; font-weight: bold">Note:- You won't be able to change your profile details later(except password)</p>
                         <div class="container" style="background-color:#f1f1f1">
-                          <button type="submit"  name="submitButton" id="submitButton">SUBMIT</button>
+                          <button type="submit"  name="submitButton" id="submitButton" onclick = "return validate(this)">SUBMIT</button>
+                          <button type="button"  class="btn btn-danger" onclick="window.location.href='/'" >Back</button>
                         </div>
                     </form>
             </div>
@@ -99,6 +111,28 @@
     <script src="/js/Registration_JS/daterangepicker.js"></script>
    
     <script src="/js/Registration_JS/global.js"></script>
+    <style>
+        .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 2s linear infinite;
+  float:right;
+  display:none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
+    <script>
+         $('#stuRegForm').on('submit', function(e){
+            $('#loader').show();
+         })
+    </script>
 
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 

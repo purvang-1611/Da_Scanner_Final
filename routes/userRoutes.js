@@ -8,6 +8,7 @@ const Course = require("../model/Batch");
 const qr=require('../model/qrcode');
 const crypto = require('crypto');
 const async = require('async');
+const userTemp = require('../model/UserTemp');
 const library = require('../model/lib_tmp');
 var inventory = require('../model/sportsinventory_model');
 var nodemailer=require('nodemailer');
@@ -88,8 +89,10 @@ userRouter.get("/loadHomePage",loggedin, (req,res)=>{
 
 // LOADING GENERATE REPORT FORM
 
+//TODO - IF STUDENT, CANT ACCESS REPORT
 userRouter.get("/loadGenerateReport",loggedin,(request, response)=>
 {
+
 	let user = request.user;
 	let route="";
 	if(user.userTypeId==1){
@@ -97,6 +100,7 @@ userRouter.get("/loadGenerateReport",loggedin,(request, response)=>
 	}
 	else if(user.userTypeId==2)
 	{
+		console.log("log");
 		route="gate";
 	}
 	else if(user.userTypeId==3)
@@ -228,13 +232,14 @@ userRouter.post('/forgotPass',(req,res,next)=>{
 				user: process.env.mailID,
 				pass: process.env.mailPassword			}
 		  });
+		  console.log("forgotpass");
 		  var mailOptions = {
 			to: user.userEmailId,
 			from: process.env.mailID,
 			subject: 'DA Scanner Password Reset',
 			text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 			  'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-			  'http://' + req.headers.host + '/users/reset/' + token + '\n\n' +
+			  'https://' + req.headers.host + '/users/reset/' + token + '\n\n' +
 			  'If you did not request this, please ignore this email and your password will remain unchanged.\n'
 		  };
 		  smtpTransport.sendMail(mailOptions, function(err) {
@@ -297,11 +302,12 @@ userRouter.post("/changePassword",loggedin,(req,res) =>{
 		})
 		}
 	else{
-		//console.log("not");
+		console.log("not");
 		res.render("ChangePassword",{
 			msg: "",
 			error: "Old password Incorrect",
-			title: ""
+			title: "",
+			id: req.user.userTypeId
 		})
 	}
 	});
@@ -319,7 +325,64 @@ userRouter.get('/registerStudent',(req,res)=>{
 });
 
 
-
+userRouter.get('/confirmUser/:token',(req,res)=>{
+	console.log("heyyyy");
+	let toDel=req.params.token;
+	userTemp.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+		if (!user) {
+		  
+		  req.flash('info', 'Password reset token is invalid or has expired.');
+		  return res.redirect('/');
+		}
+		//console.log(user);
+		let confirmUser = new User();
+		confirmUser._id=user._id;
+		confirmUser.courseName=user.courseName;
+		confirmUser.batchYear=user.batchYear;
+		confirmUser.fName=user.fName;
+		confirmUser.lName=user.lName;
+		confirmUser.password=user.password;
+		confirmUser.qr_code=user.qr_code;
+		confirmUser.enabled=true;
+		confirmUser.qr_cnt=user.qr_cnt;
+		confirmUser.userEmailId=user.userEmailId;
+		confirmUser.userTypeId=5;
+		qr.generateQR(confirmUser._id,confirmUser.qr_code,(flag)=>{
+			
+						if(!flag){
+							res.render('loginPage',{
+								title: "Helloo, Welcome to DA-Scanner.",
+								error:"",
+								info: "Email Confirmed.QR not sent. Please login and Regenerate."
+							})
+						}
+						else{
+							confirmUser.save().then(result=>{
+								res.render('loginPage',{
+									title: "Helloo, Welcome to DA-Scanner.",
+									error:"",
+									info: "Email Confirmed. Please login to continue"
+								})
+							}).catch(err=>{
+								res.render('loginPage',{
+									title: "Helloo, Welcome to DA-Scanner.",
+									error:"Error Confirming user",
+									info: ""
+								})
+							})
+						}
+						
+		
+		})
+		
+	})
+	userTemp.deleteOne({resetPasswordToken: toDel},(err)=>{
+		if(err){
+			console.log(err);
+		}
+	});
+	
+})
 
 userRouter.post('/registerStudent',(req,res)=>{
 
@@ -334,7 +397,7 @@ userRouter.post('/registerStudent',(req,res)=>{
 				
 		}
 		else{
-			let user = new User();
+			let user = new userTemp();
 
 			let ID = req.body.stuID;
 			let batch = ID.substr(4,2);
@@ -351,15 +414,15 @@ userRouter.post('/registerStudent',(req,res)=>{
 					user.lName = req.body.lname;
 					user.password=hashedPass;
 					user.userEmailId = req.body.emailId;
-					user.enabled = true;
+					user.enabled = false;
 					user._id = ID;
 					let today = new Date().getFullYear();
-					console.log(user.batchYear + " " + today);
-					if(parseInt(user.batchYear) < today)
+					//console.log(year + " " + today);
+					if(parseInt(user.batchYear) < today || year > today)
 					{
 						res.render("studentRegistration",{
 							data:req.body,
-							error:"You are an alumni, you can't register"
+							error:"You are an alumni, or ID  is invalid"
 						})
 						return;
 					}
@@ -369,29 +432,67 @@ userRouter.post('/registerStudent',(req,res)=>{
 					id1=id1+Date.now();
 					user.qr_code = id1;
 					user.qr_cnt = 5 ; //Initially 5 counts available
-
-
+					user.resetPasswordToken = id1;
+					user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+					
 					user.save().then(result=>{
 
-						 qr.generateQR(user._id,id1,(flag)=>{
-						 if(!flag){
-								console.log(err);
-							}
-							else{
+						var smtpTransport = nodemailer.createTransport({
+							service: 'gmail',
+							auth: {
+								user: process.env.mailID,
+								pass: process.env.mailPassword			}
+						  });
+						  var mailOptions = {
+							to: user.userEmailId,
+							from: process.env.mailID,
+							subject: 'DA Scanner Confirm Email for ' + user._id,
+							text: 'You are receiving this because you (or someone else) has registered at DA-Scanner.\n\n' +
+							  'Please click on the following link, or paste this into your browser to confirm your email (Link expires in 1 hour):\n\n' +
+							  'https://' + req.headers.host + '/users/confirmUser/' + id1 + '\n\n' +
+							  'If you did not request this, please ignore this email and the link will expire in 1 hour.\n'
+						  };
+						  smtpTransport.sendMail(mailOptions, function(err) {
+							req.flash('info', 'An e-mail has been sent to ' + user.userEmailId + '. Please confrim your account.');
+							res.render('loginPage',{
+								title: "Helloo, Welcome to DA-Scanner.",
+								error:"",
+								info: req.flash('info')
+							})
+
+							
+						});
+
+
+					}).catch(err=>{
+							res.render("studentRegistration",{
+								data: req.body,
+								error: "Server Error"
+					})
+					/*qr.generateQR(user._id,id1,(flag)=>{
+						if(!flag){
+							res.render("studentRegistration",{
+								data: req.body,
+								error: "Server issue. Please try again."
+							})
+						   }
+						   else{
+							user.save().then(result=>{
 							res.render("loginPage",{
 							title: "Successfully Registered. Login to continue",
 							error: ""
 							})
 
-						 }
-						});
-							
-					}).catch(err=>{
-						res.render("studentRegistration",{
-							data: req.body,
-							error: "Server Error"
+						 }).catch(err=>{
+							res.render("studentRegistration",{
+								data: req.body,
+								error: "Server Error"
+							})
 						})
-					})
+						}*/
+					});
+							
+					
 
 				}
 				else{
@@ -415,67 +516,3 @@ userRouter.post('/registerStudent',(req,res)=>{
 
 module.exports = userRouter;
 
-/*
-[
-	check("userId","this userId is already exist").trim()
-	.custom((value,request) =>
-	{
-		User.findById(value)
-		.then(user =>
-		{
-			if(user)
-			{
-				throw new Error();
-			}
-			else
-			{
-				return true;
-			}
-		})
-		.catch(err =>
-		{
-			console.log("error occured while findById in User");
-			console.log(err);
-		})
-	})
-	,
-	check("userEmailId", "Enter valid email address").trim().isEmail(),
-	check("userEmailId", "this email is already exist").trim().isEmail().custom((value) =>
-	{
-		User.find({userEmailId: value})
-		.then(user =>
-		{
-			console.log(user);
-			if(user)
-			{
-				throw new Error();
-			}
-			else
-			{
-				return true;
-			}
-		})
-		.catch(err=>
-		{
-			console.log("error occured while find in User");
-			console.log(err);
-		})
-	})
-	,
-	check("password", "Enter valid password").trim().isLength({min: 8}),
-	check("passwordAgain").custom((value,request)=>
-	{
-		//console.log(request.req.body.password);
-		if(value != request.req.body.password)
-		{
-			//console.log(value);
-			throw new Error("password does not match");
-		}
-		else
-		{
-			return true;
-		}
-	})
-]
-,
-*/

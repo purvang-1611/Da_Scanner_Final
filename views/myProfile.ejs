@@ -2,12 +2,20 @@
 <html>
 <head>
 	<title>
-		Scan QR From gate
+		My Profile
 	</title>
 	<style type="text/css">
 		p
 		{
 			color: red
+        }
+        #content-body{
+                padding-left: 20px;
+            }
+        @media  screen and (max-width:768px) {
+            #content-body{
+                padding-left: 2px;
+            }
         }
         
 
@@ -52,7 +60,7 @@
 
 %>
 <% if(id!=1) {%> 
-<div class="page-content-body" id="content-body" style="padding-left: 50px;">
+<div class="page-content-body" id="content-body">
 <%}if(id==1) {%>
 <div class="page-content-body" id="content-body"> <%}%>
 		   	<br/><br/>
@@ -66,7 +74,7 @@
 					<br/>
 					<div class="form-group row" style="margin-left: 10px;">
 							<label for="Last Name" class="col-sm-2 col-form-label">Last Name</label> 
-							<input class="form control col-sm-4" type="text" placeholder="LAST NAME" name="lName" id="lname" value="<%=lname%>" disabled>
+							<input class="form-control col-sm-4" type="text" placeholder="LAST NAME" name="lName" id="lname" value="<%=lname%>" disabled>
 					</div>
 					<br/>
 					<div class="form-group row" style="margin-left: 10px;">
@@ -123,7 +131,9 @@
 					<!--<button type="submit" class="btn btn-primary" style="margin-left: 20px" id="sub">Add Employee</button>-->
 				</form>
 	
-	</div>
+    </div>
+    <%if (id!=1) {%>
+        <%-include('footer')%> <%}%>
 	<script src="/js/Registration_JS/reg.js"></script>
     <!-- Jquery JS-->
     

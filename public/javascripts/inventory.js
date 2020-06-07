@@ -10,11 +10,50 @@ window.addEventListener('load',(event)=>{
     document.getElementById('rpr2').hidden=true;
     document.getElementById('defects1').required=false;
     document.getElementById('repair1').required=false;
+    
   });
+    document.getElementById('qty1').addEventListener("change",qtyCheck);
+
+    function validateUpdateForm(){
+      let qty = document.getElementById('qty1').value;
+      let def =document.getElementById('defects1').value;
+      let rep = document.getElementById('repair1').value;
+
+      if(document.getElementById('rqty1').checked){
+          if(qty<1){
+            //alert("Value cant be Negative or 0");
+          }
+      }
+      if(document.getElementById('rdft1').checked){
+        if(def<1){
+          //alert("Value cant be Negative or 0");
+        }
+    }
+    if(document.getElementById('rrpr1').checked){
+      if(rep<1){
+        //alert("Value cant be Negative or 0");
+      }
+    }
+
+    }
+    function validateForm(){
+      document.getElementById('qty1').value;
+      if(value<1)
+      {
+        alert("Value cant be Negative or 0");
+      }
+    }
+    function qtyCheck(){
+      document.getElementById('qty1').value;
+      if(value<1)
+      {
+        alert("Value cant be Negative or 0");
+      }
+    }
   function submitFn(){
     if(document.getElementById('rqty1').checked){
         let box = document.getElementById('qty1');
-        if(box.value.length >=1){
+        if(box.value >=1){
           return true;
         }
         else{
@@ -23,7 +62,7 @@ window.addEventListener('load',(event)=>{
     }
     else if(document.getElementById('rrpr1').checked){
       let box = document.getElementById('repair1');
-      if(box.value.length >=1){
+      if(box.value >=1){
         return true;
       }
       else{
@@ -32,7 +71,7 @@ window.addEventListener('load',(event)=>{
   }
   else if(document.getElementById('rdft1').checked){
     let box = document.getElementById('defects1');
-    if(box.value.length >=1){
+    if(box.value>=1){
       return true;
     }
     else{

@@ -1,10 +1,10 @@
 const db=require('mongoose');
 /*set up library schema  for Rc student in out*/
-const librarySchema=db.Schema({
+let librarySchema=db.Schema({
     userId : {type:Number},
     in_time : {type:String},
     out_time : {type:String},
-    date:{type:String}
+    date:{type:Date}
         
        
 });

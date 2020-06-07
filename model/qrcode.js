@@ -46,7 +46,7 @@ var qr={
         console.log(dir);
         let qr_png=qrimg.imageSync(encryptedID,{ type: 'png'});
         let qr_code_file_name = id + '.png';
-        fs.writeFileSync(dir+'\\GeneratedQRCodes\\' + qr_code_file_name, qr_png,function(err)
+        fs.writeFileSync(dir+'/GeneratedQRCodes/' + qr_code_file_name, qr_png,function(err)
         {
             if(err)
             {
@@ -55,7 +55,7 @@ var qr={
         });
 
         let email_id=id+"@daiict.ac.in";
-        let img_src=dir+'\\GeneratedQRCodes\\'+qr_code_file_name;
+        let img_src=dir+'/GeneratedQRCodes/'+qr_code_file_name;
 
         
             var transporter=nodemailer.createTransport({
@@ -68,8 +68,8 @@ var qr={
             var mailOptions={
                 from: process.env.mailID,
                 to:email_id,
-                subject:"Registration successful",
-                text:"Hello, \n\n You have successfully registered at DA-Scanner. Here is your QR code.\n\n You can regenerate 5 more QR codes by logging in to your profile. \n\n Contact Admin if 5 tries are done",
+                subject:"DA-Scanner QR code for "+id,
+                text:"Hello, \n\n You have just registered or regenerated your QR code. Here is your QR code.\n\n You can regenerate 5 more QR codes by logging in to your profile. \n\n Contact Admin if 5 tries are done",
                 //html: "Embedded image: <img src='cid:unique@kreata.ee' />",
                 attachments: [{
                     filename: qr_code_file_name,

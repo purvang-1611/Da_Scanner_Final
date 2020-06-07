@@ -1,12 +1,12 @@
 const db=require('mongoose');
 
-
+var schema = db.Schema;
 //set the library Schema 
-const library_tmp_Schema=db.Schema({
+let library_tmp_Schema=new schema({
     userId : {type:Number},
     in_time : {type:String},
     out_time : {type:String},
-    date:{type:String}
+    date: {type:Date,default: ""}
         
        
 });

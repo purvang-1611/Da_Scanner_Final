@@ -1,21 +1,53 @@
 <html>
 
     <head>
-        <link rel="stylesheet" type="text/css" href="/stylesheets/homepageSAC.css"></link>
+        <title>Currently Borrowed - DAScanner</title>
         <link rel="stylesheet" type="text/css" href="/stylesheets/AdminDashboard_css.css"></link>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" type="text/css" href="/stylesheets/homepageSAC.css"></link>
         <script type="text/javascript" src="/javascripts/homepageSAC.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
+   var isValid=true;
+function getLocation(callback) {
+    if (navigator.geolocation) {
+    //alert("hey");
+     navigator.geolocation.getCurrentPosition((position)=>{
 
+      var pos ={
+        lat: position.coords.latitude,
+        lon: position.coords.longitude
+      }
+
+      return callback(pos);
+    });
+    //alert(a);
+    } else {
+    alert("Geolocation is not supported by this browser.");
+    isValid=true;
+    }
+
+  }
 
 function CheckQR(id,status)
     {
+     
+      getLocation(function(position){
+          //alert(position.lat + " --- " + position.lon);
+          //23.0079356 --- 72.5260686
+          let lat=position.lat;
+          let lon=position.lon;
+          if(lat>=23 && lat<=24 && lon >= 72 && lon<=73){
+            isValid=true;
+          }
+     
+     
+      if(isValid){
+        
       $.ajax(
      {
        type:'post',
@@ -43,7 +75,11 @@ function CheckQR(id,status)
              
          
        });
-     }
+      }else{
+        alert("You are not in you office vicinity. You cannot process requests right now");
+      }
+      });
+  }
     
     
   function verifyme()
@@ -62,18 +98,15 @@ function CheckQR(id,status)
               $.ajax({
                   type: 'get',
                   url: '/decryptID/'+result.text,
-                  
-                  
-
                   success: function(data){
                     decryptedID = data;
-                    alert(decryptedID);
+                    //alert(decryptedID);
                     
                     let s1=Number(decryptedID);
                   }
                 })
 
-
+                //alert("done");
         setTimeout(()=>{
           
 
@@ -382,7 +415,6 @@ function CheckQR(id,status)
             
             <td><select required id="sel1" class="sel" name="equipmentID" onchange="v1()">
               
-                <option value="">Select equipment</option>
                 <% data.stock.forEach(equipment=>{%>
     
                         <option data-avl="<%= equipment.NumberOfAvailable %>" value="<%= equipment._id %>"><%= equipment.name %></option>
@@ -397,7 +429,7 @@ function CheckQR(id,status)
         <tr></tr>
         <tr>
             <td><label class="qty">Quantity: </label></td>
-            <td><input type="number" class="qty1" id="qty1"  value=1 onkeyup="validateForm();v2();" required name="quantity"></td>
+            <td><input type="number" class="qty1" id="qty1"  onkeyup="validateForm();v2();" required name="quantity" min="1"></td>
             
         </tr>
         <tr>

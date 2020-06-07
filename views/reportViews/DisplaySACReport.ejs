@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>
-		Scan QR From gate
+		SAC Report
 	</title>
 	<style type="text/css">
 		table, th, td
@@ -14,15 +14,34 @@
 			color: red
 		}
 	</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
-<body>
-	<h1> <%= title %> </h1>
-	<button id="pdf">Generate PDF</button>
-	<br><br>
+<body style="margin-left:100px">
+<h1> <%= title %> </h1>
+<button id="pdf" class="btn btn-primary"> <i class="fas fa-file-download"></i> &nbsp; Generate PDF</button>
+<button id="pdf" class="btn btn-secondary" onclick="window.location='/users/loadGenerateReport'"> Back</button>
+<br><br>
+	<%if (startDate!=0 && id!=999999999){%>
+		Student ID: <b id="stuID"><%=id %></b>
+		FROM  <b id="startDate"> <%= startDate %> </b> 
+	TO  <b id="endDate"> <%= endDate %> </b> <br><br>
+	<%} else if (startDate==0){%>
+		<b id=startDate></b>
+		<b id="endDate"></b>
+		Student ID: <b id="stuID"><%=id%></b>
+	<% }else if(id==999999999){ %>
+		<b id="stuID"></b>
 	FROM  <b id="startDate"> <%= startDate %> </b> 
 	TO  <b id="endDate"> <%= endDate %> </b> <br><br>
+	<%}%> <br/><br/>
 
-		<table style="width:100%" id="table">
+		<table style="width:80%" id="table" class="table table-bordered">
 		 <thead>
 		    <th>StudentId</th>
 		    <th>Student Name</th>
@@ -88,14 +107,19 @@
 <script>
 	document.getElementById('pdf').onclick = function()
 	{
+		
 		var startDate = document.getElementById("startDate").innerHTML;
 		var endDate = document.getElementById("endDate").innerHTML;
+		var stuID = document.getElementById("stuID").innerHTML;
 		var img = new Image(50, 50);
 		img.src = "/pic/da_logo.png";
 		var doc = new jsPDF('p', 'pt');
 		var res = doc.autoTableHtmlToJson(document.getElementById('table'));
 		var height = doc.internal.pageSize.height;
-		doc.text("DAIICT SAC ISSUE/RETURN RECORDS FROM "+ startDate + " TO " + endDate, 20, 50);
+		if(startDate!="")
+		doc.text("DA SAC ISSUE/RETURN Records FROM "+ startDate + " TO " + endDate,20,50);
+		else
+		doc.text("DA SAC ISSUE/RETURN Records for "+ stuID,20,50);
 		// doc.autoTable(res.columns, res.data, {
 		//   startY: 200
 		// });
@@ -103,6 +127,7 @@
 		//   startY: doc.autoTableEndPosY() + 50
 		// });
 		doc.addImage(img, 'PNG', 180, 200);
+		
 		doc.autoTable(res.columns, res.data,
 		{
 			startY: height,
@@ -112,7 +137,12 @@
 				doc.text("DAIICT - SAC RECORDS", 50, height - data.settings.margin.bottom + 10);
 			}
 		});
-		doc.save("DA SAC ISSUE/RETURN Records FROM "+ startDate + " TO " + endDate);
+		if (startDate!="")
+		doc.save("DA SAC  FROM "+ startDate + " TO " + endDate);
+		else
+		doc.save("DA SAC ID "+stuID);
+
+
 	};
 </script>
 

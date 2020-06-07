@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Dashboard</title>
+<title>Admin Dashboard</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <!--<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap.min.css" />-->
 
 
 <style>
-       
+
+.tb_btn{
+        width: 84px;
+}
 </style>
 
 </head>
@@ -21,7 +24,6 @@
                 </div>
         </div>
         
-
         <!--<div id="sidebar" > 
                 <ul >
                         <li><img src="/pic/course-bg-3.jpg" alt="daiict" style="max-width: 100%;"></li>
@@ -47,14 +49,17 @@
                 </ul>
         </nav> -->
 <%-include('adminHeader') %>
+<link rel="stylesheet" href='https://cdn.datatables.net/responsive/2.2.4/css/responsive.dataTables.min.css'>
 <div class="page-content-body" id="content-body">
           <br/><br/>
+          
         <div class="row-fluid">
                 <h2 style="color: black">Availabe Seats in Library</h2>
                 <img src="/pic/chair.png" width="100px" height="100px">
                 <h3 style="display:inline"><%=avl_seats%></h3></h3 style="display:inline">
         </div>
         <br/><br/>
+        
         <div class="equiptable">
                         <h3>Equipment Availibity</h3>
                 <table style="width:80%">
@@ -72,26 +77,28 @@
                 </table>
         </div>
   
-
-        <h2 style="margin: 20px 10px"> Add a course </h2>
-        <form id='courseForm' action='/admin/addCourse'>
+        
+        <div class="row">
+                <div class="col-md-5">
+                        <h2 style="margin: 20px 10px"> Add a course </h2>
+        <form id='courseForm' action='/admin/addCourse' method="post">
         <div class="form-group row" style="margin-left: 10px">
-          <label for="courseID" class="col-sm-2 col-form-label">CourseID:</label>
-          <input type="number" class="form-control col-sm-4" id="courseID" name="courseID">
+          <label for="courseID" class="col-sm-2 col-form-label">CourseID:</label> &nbsp; &nbsp;
+          <input type="number" class="form-control col-md-4" id="courseID" name="courseID">
           <span id="error-course" style="color:red;">
                
             </span> 
         </div>
         <div class="form-group row" style="margin-left: 10px">
-          <label for="courseName" class="col-sm-2 col-form-label">Course Name:</label>
-          <input type="text" class="form-control col-sm-4" id="courseName" name="courseName">
+          <label for="courseName" class="col-sm-2 col-form-label">Course Name:</label> &nbsp; &nbsp;
+          <input type="text" class="form-control col-md-4" id="courseName" name="courseName">
           <span id="error-courseName" style="color:red;">
                
         </span> 
         </div>
         <div class="form-group row" style="margin-left: 10px">
-                <label for="Duration" class="col-sm-2 col-form-label">Duration (in Years):</label>
-                <input type="number" class="form-control col-sm-4" id="duration" name="duration">
+                <label for="Duration" class="col-sm-2 col-form-label">Duration (in Years):</label> &nbsp; &nbsp;
+                <input type="number" class="form-control col-md-4" id="duration" name="duration">
                 <span id="error-duration" style="color:red;">
                
                 </span> 
@@ -99,29 +106,78 @@
         
         <button type="submit" class="btn btn-primary" style="margin-left: 20px" id="sub">Add course</button>
         <br>
-        <span id="success" style="color:green;  font-size: 15px;"></span>
+       
         <span id="error" style="color:red; font-size: 15px;"></span>
                
         </span> 
       </form> 
 
+</div>
+                
+                <div class="col-md-5">
+                        <br/>
+                        <h2>Manage Courses</h2>
+                    
+                        <table class="table dt-responsive display" id="courseTable" style="width:80%">
+                        <thead>
+                        <tr>
+                                <th style="width: 90px;">CourseID</th>
+                                <th style="width: 100px;">Course Name</th>
+                                <th style="width: 90px;">Duration (Years)</th>
+                                <th class="tb_btn" colspan="2">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+
+                                <% if(coursedata1){%>
+                                <% for(records of  coursedata1) {%>
+                                        <tr>
+                                                <td><%= records._id %></td>
+                                                <td><input type="text" id="cname_<%=records._id%>" disabled value="<%= records.course_name %>"  style="width: 70px;"></td>
+                                                <td><input type="text" id="cduration_<%=records._id%>" disabled value="<%= records.duration %>"  style="width: 70px;"></td>
+                                                <td>
+                                                        <button class="btn btn-primary" id="up_<%=records._id%>" onclick="updateme('<%=records._id%>')"  ><i class="fas fa-pen fa-xs"></i></button>
+                                                        <button class="btn btn-primary" id="sa_<%=records._id%>" hidden onclick="saveme('<%=records._id%>')"><i class="fas fa-save fa-xs"></i>
+                                                        </button>
+                                                </td><td>
+                                                        <button class="btn btn-primary" onclick="deleteme('<%=records._id%>')"><i class="fas fa-trash fa-xs"></i>
+                                                        </button>
+                                                </td>
+                                        </tr>
+                                <% }} %>
+                        </tbody>
+                            
+                        </table>
+                        
+                              
+                </div>
+        </div>
+        
+
+</div>
 <!--</div>--> 
 </div>
 <!--Footer-part-->
 
 <!--end-Footer-part-->
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
 <script src="/js/Dashboard_JS/jquery.min.js"></script> 
 <script src="/js/Dashboard_JS/jquery.ui.custom.js"></script> 
-<!--<script src="/js/Dashboard_JS/bootstrap.min.js"></script>--> 
-<script src="/js/Dashboard_JS/jquery.uniform.js"></script> 
-<script src="/js/Dashboard_JS/select2.min.js"></script> 
-<script src="/js/Dashboard_JS/jquery.dataTables.min.js"></script> 
+<!--<script src="/js/Dashboard_JS/bootstrap.min.js"></script>-->
 <script src="/js/Dashboard_JS/matrix.js"></script> 
 <script src="/js/Dashboard_JS/matrix.tables.js"></script>
+
+<script src = "https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js"></script>
+
+
+<script src = 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+        
         $(document).ready(function() {
+        
             $('#courseForm').on('submit', function(e){
                 e.preventDefault();
               // validation code here
@@ -138,7 +194,7 @@
                         e.preventDefault();
                         
                         $.ajax({
-                        type: 'POST',
+                        type: 'post',
                         url: '/admin/addCourse/',
                         data: {
                                 courseID: courseID,
@@ -148,13 +204,13 @@
                         success: function(data){
                         let confirm = data;
                         $('#success').html(confirm);
+                        window.location.href="/users/loadHomePage";
                         //alert(confirm);
                         },
                         error: function(jqXHR, textStatus, error)
                         {
                                //alert("asdasd" + error);
                                //console.log("heyuuuuu" + jqXHR.responseText);
-
                                let err = jqXHR.responseText;
                                $("#error").html(err);
                                 //console.log(jqXHR);
@@ -164,7 +220,6 @@
                 
                         });
                 }
-
                 if(courseID.length == 2 )
                 {
                         $("#error-course").html("");
@@ -172,7 +227,6 @@
                 else{
                         $("#error-course").html("Course ID should be of 2 digits");
                 }
-
                 if(course.length > 4)
                 {
                         $("#error-courseName").html("");
@@ -180,7 +234,6 @@
                 else{
                         $("#error-courseName").html("Course name too short");
                 }
-
                 if(dur.length >=1 )
                 {
                         $("#error-duration").html("");
@@ -190,12 +243,97 @@
                 }
               if(valid==0) {    
                 e.preventDefault();
-
               }
             });
           });
-        </script>
+</script>
+
+
+<script>
+// $('#courseTable').DataTable({});
+let prevName="";
+let prevDur="";
+let prevID="";
+function deleteme(id)
+{
+        //alert(id);
+        $.ajax(
+     {
+         type:'post',
+         url:'/admin/deleteCourse/',
+         data:{
+          id: id,
+                
+         },
+      success:function(data){
+    
+        let confirm = data;
+        alert(confirm);
+         window.location.href="/users/loadHomePage";
+              
+             },
+             error:function(RXHDR,statusText,error)
+            { 
+                let err = jqXHR.responseText;
+               alert(err);
+            }   
+          
+             //document.getElementsByName('studentID').disabled=true;
+         
+       });
+     }
+    
+function updateme(id){
+        //console.log('hey');
+        if(prevName!="" && prevDur!=""){
+                prevName.disabled=true;
+                prevDur.disabled=true;
+                document.getElementById('sa_'+prevID).hidden=true;
+                document.getElementById('up_'+prevID).hidden=false;
+
+        }
+        document.getElementById('cname_'+id).disabled=false;
+        document.getElementById('cduration_'+id).disabled=false;
+        document.getElementById('sa_'+id).hidden=false;
+        document.getElementById('up_'+id).hidden=true;
+        prevName=document.getElementById('cname_'+id);
+        prevDur=document.getElementById('cduration_'+id);
+        prevID=id;
+}
+function saveme(id){
+        let coursename,courseduration;
+        coursename=document.getElementById('cname_'+id).value;
+        courseduration=document.getElementById('cduration_'+id).value;
+        $.ajax(
+     {
+         type:'post',
+         url:'/admin/updateCourse/',
+         data:{
+          id: id,
+          coursename:coursename,
+          courseduration:courseduration,
+         },
+      success:function(data){
+    
+        let confirm = data;
+        $('#success').html(confirm);
+        document.getElementById('cname_'+id).disabled=true;
+        document.getElementById('cduration_'+id).disabled=true;
+        document.getElementById('sa_'+id).hidden=true;
+        document.getElementById('up_'+id).hidden=false;
+              
+             },
+             error:function(RXHDR,statusText,error)
+            { 
+                let err = jqXHR.responseText;
+                $("#error").html(err);
+            }   
+          
+             //document.getElementsByName('studentID').disabled=true;
+         
+       });
+     }
+    
+</script>
 </body>
 </html>
-
-

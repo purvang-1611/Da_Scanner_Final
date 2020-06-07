@@ -4,12 +4,52 @@ var tmp_lib=require('../model/lib_tmp');
 var lib=require('../model/library');
 const date = require('date-and-time');
 var user=require('../model/User');
-var loggedin = function (req,res,next)
+
+var loggedinReport = function (req,res,next)
 {
+    if(req.cookies['remember_me']){
+        req.user = req.cookies['remember_me'];
+    }
     if(req.isAuthenticated())
     {
        
         user.find({_id : req.user._id},function(err,rows){
+            if(err)
+            {
+                res.redirect('/');
+            }
+            else{
+                if(rows.length==0){
+                    //console.log("Enabled false");
+                    req.flash('message','Invalid User (You are disabled or not logged IN)');
+                    res.redirect('/');
+                }
+                else if(rows[0].userTypeId==4 || rows[0].userTypeId == 1)
+                {
+					//console.log("correct");
+                    next() // if logged in
+                }
+                else{
+                    //console.log("Invalid");
+                    req.flash('message','Invalid User (You are disabled or not logged IN');
+                    res.redirect('/');
+                }
+            }
+        })
+       
+    }   
+	else
+		res.redirect('/');
+}
+var loggedin = function (req,res,next)
+{
+    if(req.cookies['remember_me']){
+        req.user = req.cookies['remember_me'];
+    }
+    if(req.isAuthenticated())
+    {
+       
+        user.find({$and : [{_id : req.user._id},{enabled:true}]},function(err,rows){
             if(err)
             {
                 res.redirect('/');
@@ -33,11 +73,7 @@ var loggedin = function (req,res,next)
             }
         })
        
-    }
-    else if(req.cookies['remember_me']){
-		req.user = req.cookies['remember_me'];
-		next();
-	}            
+    }   
 	else
 		res.redirect('/');
 }
@@ -188,7 +224,7 @@ router.get('/:id?',loggedin,function(req,res,next){
                     in_time:new String(h+":"+m+":"+s),
                     out_time:null,
                     //date:new Date(dat_obj.getFullYear(),dat_obj.getMonth(),dat_obj.getDate())
-                    date: date.format(now, 'DD-MM-YYYY')
+                    date: date.format(now, 'YYYY-MM-DD')
                 
                 });
                
@@ -219,7 +255,7 @@ router.get('/:id?',loggedin,function(req,res,next){
             
                         const now = new Date();
                         let curtime=date.format(now,'HH:mm:ss')
-                        let currDate = date.format(now, 'DD-MM-YYYY');
+                        let currDate = date.format(now, 'YYYY-MM-DD');
                        
                         docs1[0].out_time=curtime;
                         docs1[0].date=currDate;
@@ -289,21 +325,31 @@ router.get('/:id?',loggedin,function(req,res,next){
     });
 }
 else{
-    tmp_lib.find(function(err,rows){
+    tmp_lib.find({}).lean().exec(function(err,rows){
         if(err)
         {
             res.json(err);
         }
         else{
-          
+            console.log(rows.length)
+            if(rows.length!=0){
+
+               for(let i=0;i<rows.length;i++){
+                   rows[i].date = rows[i].date.toDateString();
+               }
+            }
+            
+            console.log(rows);
             let avl_seats=200-rows.length;
            
             //res.json(x);
-            res.render('library_views/add_lib_tmp',{
-                avl_seats:avl_seats,
-                students:rows,
-                errors:null
-            })
+            
+                res.render('library_views/add_lib_tmp',{
+                    avl_seats:avl_seats,
+                    students:rows,
+                    errors:null
+                }) 
+        
         }
     })
 }
@@ -318,7 +364,7 @@ router.post('/',function(req,res,next){
     var h=d1.getHours();
     var m=d1.getMinutes();
     var s=d1.getSeconds();
-   
+   console.log("in temp");
     const tmp=new tmp_lib({
         userId : req.body.studentId,
         //in_time : dat_obj.getTime(),
@@ -385,7 +431,7 @@ router.delete('/:id',function(req,res,next){
 
 // GENERATING REPORT FOR LIBRARY
 
-router.post("/generateReport",loggedin,(request,response)=>{
+router.post("/generateReport",loggedinReport,(request,response)=>{
 
 	let option = request.body.reportOption;
 
@@ -394,8 +440,9 @@ router.post("/generateReport",loggedin,(request,response)=>{
 
     today = new Date();
     let fdate  = new Date("2000-01-01");
-	let startDate = date.format(fdate, 'DD-MM-YYYY');
-	let endDate = date.format(today, 'DD-MM-YYYY');
+	let startDate = fdate;
+    let endDate = today;
+    today = endDate;
 	console.log(today);
 	let startId = "200100000";
 	let endId = "999999999";
@@ -411,15 +458,18 @@ router.post("/generateReport",loggedin,(request,response)=>{
 		let sdate  = new Date(request.body.startDate);
 		let edate  = new Date(request.body.endDate);
 
-		startDate = date.format(sdate, 'DD-MM-YYYY');
-		endDate = date.format(edate, 'DD-MM-YYYY');
+		//startDate = date.format(sdate, 'DD-MM-YYYY');
+		//endDate = date.format(edate, 'DD-MM-YYYY');
 
-		if(startDate > endDate)
+		if(sdate > edate)
 		{
-			let tempDate = startDate;
-			startDate = endDate;
-			endDate = tempDate;
-		}
+			let tempDate = sdate;
+			sdate = edate;
+			edate = tempDate;
+        }
+        startDate=sdate;
+        endDate=edate;
+    
 	}
 
 	console.log(startDate + " "+ endDate);
@@ -482,7 +532,10 @@ router.post("/generateReport",loggedin,(request,response)=>{
 				startDate: startDate,
 				endDate: endDate
 			});*/
-			libRec = result;
+            libRec = result;
+            for(let i = 0;i<libRec.length;i++){
+                libRec[i].date = libRec[i].date.toDateString();
+            }
 		}
 		else
 		{
@@ -495,7 +548,8 @@ router.post("/generateReport",loggedin,(request,response)=>{
 			});*/
 			libRec=undefined;
 		}
-	});
+    });
+    console.log(libRec);
 
 	// FROM CURRENT PENDING ENTRY TABLE 
 	tmp_lib.aggregate(([
@@ -544,15 +598,20 @@ router.post("/generateReport",loggedin,(request,response)=>{
 			console.log(startDate, endDate);
 			if(result.length !== 0)
 			{
-				console.log(result);
-				response.render("reportViews/DisplayLIBReport",
-				{
-					title: "Generated Report From Gate Reocrds",
-					tempRec: result,
-					libRec: libRec,
-					startDate: startDate,
-					endDate: endDate
-				});
+                for(let i = 0;i<result.length;i++){
+                    result[i].date = result[i].date.toDateString();
+                }
+				setTimeout(()=>{
+                    response.render("reportViews/DisplayLIBReport",
+                    {
+                        title: "Generated Report From RC Records",
+                        tempRec: result,
+                        libRec: libRec,
+                        startDate: startDate==fdate ? 0 : startDate.toDateString(),
+                        endDate: endDate.toDateString(),
+                        id:endId
+                    });
+                },1000);
 				
 			}
 			else
@@ -560,11 +619,12 @@ router.post("/generateReport",loggedin,(request,response)=>{
 				setTimeout(()=>{
 				response.render("reportViews/DisplayLIBReport",
 				{
-					title: "Generated Report From Gate Reocrds",
+					title: "Generated Report From RC Records",
 					tempRec: null,
 					libRec: libRec,
-					startDate: startDate,
-					endDate: endDate
+					startDate: startDate==fdate ? 0 : startDate.toDateString(),
+                    endDate: endDate.toDateString(),
+                    id:endId
                 });
             },1000);
 				//tempRec=undefined;

@@ -6,7 +6,7 @@ let equipmentBorrows = new Schema({
 
     equipment_id : {type:mongoose.Schema.ObjectId,ref:"inventorytb"},
     student_id : {type:Number},
-    issue_date : {type:String},
+    issue_date : {type:Date},
     quantity:{type:Number}
 
 });

@@ -1,55 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Dashboard</title>
+<title>Employee Details</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <!--<link rel="stylesheet" href="/css/Dashboard_CSS/bootstrap.min.css" />-->
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
+
 
 <style>
- #EmpTable_filter input{
-	margin-right:50px;
-}        
+ #EmpTable_filter{
+	margin-right:130px;
+}    
+#EmpTable_paginate{
+	margin-right:130px;
+}
+
 </style>
 
 </head>
 <body>
 
 <%-include('adminHeader') %>
+<link rel="stylesheet" href='https://cdn.datatables.net/responsive/2.2.4/css/responsive.dataTables.min.css'>
 <div class="page-content-body" id="content-body">
           <br/><br/>
         <div class="row-fluid">
                 <h2 style="color: black"><%=title%></h2>
                 
 		</div>
-		<table class="table table-light table-bordered" id="EmpTable" style="max-width:90%">
+		<table class="table dt-responsive nowrap display" style="width: 90%; float: left" id="EmpTable">
 			<thead class="thead-dark">
 					<tr>
 							<th >Employee ID</th>
 							<th >Name</th>
 							<th >Email</th>
+							<th> Employee Type</th>
 							<th >Disable/Enable</th>
 					</tr>
 			  </thead>
 			  <tbody>
-				  		<% for(user of users){ %>
+						  <% for(user of users){ %>
+							<% var type="";
+							 if(user.userTypeId==1)
+								 type='Admin';
+							else if(user.userTypeId==2)
+								type='GateKeeper';
+							else if(user.userTypeId==3)
+								type='SAC Manager';
+							else if(user.userTypeId==4)
+								type='Librarian';
+								
+							%>
 						 <tr>
 							<td style="color:black"><%=user._id %></td>
 							<td style="color:black"><%=user.fName%> <%=user.lName %></td>
 							<td style="color:black"><%=user.userEmailId %></td>
+							<td style="color:black">  <%=type%> </td>
 							<td style="color:black">
 								<%if(user.enabled){%>
-								&nbsp;<a href="javascript:disableEmp(<%=user._id%>)" data-toggle="tooltip" title="Disable User!"><i class="fas fa-user-times"></i></a> <%} else{%>
+								&nbsp;&nbsp;<a href="javascript:disableEmp(<%=user._id%>)" data-toggle="tooltip" title="Disable User!"><i class="fas fa-user-times"></i></a> <%} else{%>
 								 &nbsp; &nbsp; &nbsp; &nbsp; <a href="javascript:enableEmp(<%=user._id%>)" data-toggle="tooltip" title="Enable User!"><i class="fas fa-user"></i></a><%}%>
 							</td>
 						  </tr>   
-						  <%} %>  
+						<%} %>  
 			  </tbody>
 	  </table>
 		<br/>
-		<button type="button" class="success" onclick="location.href='/admin/addEmpUser'">Add Employee</button>
+		<center><button type="button" class="btn btn-success" onclick="location.href='/admin/addEmpUser'">Add Employee</button></center>
 		
 		
   
@@ -69,12 +87,14 @@
 <script src="/js/Dashboard_JS/matrix.js"></script> 
 <script src="/js/Dashboard_JS/matrix.tables.js"></script>
 <script src="/js/Dashboard_JS/jquery.dataTables.min.js"></script> -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> 
 <script src = "https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src = 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
+<script src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js"></script>
 
 <script>
 $(document).ready( function () {
-    $('#EmpTable').DataTable();
+    $('#EmpTable').DataTable({});
 } );
 </script>
 <script>

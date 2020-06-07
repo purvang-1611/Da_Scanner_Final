@@ -1,0 +1,68 @@
+<html>
+
+        <head>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+            <link rel="stylesheet" type="text/css" href="/stylesheets/homepageSAC.css"></link>
+            <script type="text/javascript" src="/javascripts/inventory.js"></script>
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+            <style>
+            
+            </style>
+            <title>Currently Issued DA-Scanner</title>
+        </head>
+        <body>
+            
+            <%- include('sac_header') %> 
+          <br>
+          <div class="container">
+              <br/>
+            <h2> Currently Issued Equipments</h2> <br/> <br/>
+            <div class="row">
+                
+          <div class="table-responsive col-md-10" >
+              <% if (msg) { %>
+                <h2> <%=msg%> </h2>
+              <%}else{%>
+            <table class="table" style="font-size: medium; width:90%; float:left" id="issueTable">
+                <thead style="background-color: #20232e;color: white;">
+                    <th>Student ID</th>
+                    <th>Equipment Name</th>
+                    <th>Quantity</th>
+                    <th>Issue Date</th>
+                    <th>Return Date</th>
+                </thead>
+                <tbody>
+                    
+                    <% for(var i=0;i < data.length ; i++){ %>
+                    <tr>
+                        <td><%= data[i].student_id %></td>
+                        <td><%= data[i].inventory_records.name %></td>
+                        <td><%= data[i].quantity %></td>
+                        <td> <%= data[i].issue_date %> </td>      
+                        <td><%= data[i].return_date %></td>
+                       
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <%}%>
+        </div> </div> </div>
+        <%- include('../footer')%>
+        <style>
+            #issueTable_filter input{
+                margin-right:50px;
+            }
+           
+        </style>
+         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+        <script src = "https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src = 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>        
+        <script>
+             $(document).ready( function () {
+            $('#issueTable').DataTable({
+                "scrollX" :true
+            });
+            } );
+        </script>
+        </body>
+        </html>
